@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+
+<img src="https://lh3.googleusercontent.com/d/1oEk9IEz5eFBCPVmCE2aq7eMVei7ckegI" width="100%">
+
+<title>Avaliação – Língua Inglesa | Modelo Mãe</title>
+<style>
+body{font-family:Arial, sans-serif;max-width:900px;margin:auto;background:#f4f6fb}
+h1,h2,h3{color:#1f4fd8;text-align:center}
+.box{background:#fff;border-radius:8px;padding:15px;margin-bottom:20px;box-shadow:0 2px 5px rgba(0,0,0,0.1)}
+label{font-weight:bold}
+button{padding:12px 18px;font-size:16px;border:none;border-radius:6px;background:#1f4fd8;color:#fff;cursor:pointer}
+button:hover{background:#163ca3}
+.errada{color:#c62828}
+.correta{color:#2e7d32}
+.timer{font-weight:bold;color:#c62828;text-align:center;margin-bottom:15px}
+textarea{width:100%;height:70px}
+</style>
+</head>
+<body>
+
+<h1>Avaliação de Língua Inglesa</h1>
+<h2 id="infoProfessor">Ano: _____ | Bimestre: _____</h2>
+
+<div class="box">
+<label>Escola:</label><br>
+<input id="escola" style="width:100%"><br><br>
+
+<label>Nome do aluno:</label><br>
+<input id="nome" style="width:70%"><br><br>
+
+<label>Número:</label><br>
+<input id="numero" style="width:10%"><br><br>
+
+<label>Turma:</label><br>
+<input id="numero" style="width:10%"><br><br>
+
+<p><b>BNCC:</b> EF06LI01 – Compreender textos orais e escritos em língua inglesa.</p>
+</div>
+
+<div class="timer" id="tempo">Tempo restante: 40:00</div>
+
+<form id="quiz" class="box"></form>
+
+<button onclick="finalizar()">Enviar e ver resultado</button>
+
+<div id="feedback" class="box"></div>
+<div id="erros" class="box"></div>
+
+<script>
+/************** CONFIGURAÇÃO DO PROFESSOR **************/
+const ANO = "6º Ano";
+const BIMESTRE = "1º Bimestre";
+document.getElementById('infoProfessor').innerText = `Ano: ${ANO} | Bimestre: ${BIMESTRE}`;
+
+/************** CONTROLE DE TEMPO **************/
+let tempo = 2400;
+const cronometro = setInterval(()=>{
+ if(tempo>0){
+  tempo--;
+  let m=Math.floor(tempo/60);
+  let s=tempo%60;
+  document.getElementById('tempo').innerText=`Tempo restante: ${m}:${s.toString().padStart(2,'0')}`;
+ } else {
+  clearInterval(cronometro);
+  finalizar();
+ }
+},1000);
+
+/************** CONTROLE DE TENTATIVA **************/
+if(localStorage.getItem('tentativa_modelo_mae')){
+ alert('Você já realizou esta avaliação.');
+ document.body.innerHTML='<h2>Avaliação já realizada.</h2>';
+}
+
+/************** BANCO DE QUESTÕES (10) **************/
+const questoes = [
+ // WRITING – respostas únicas
+ {habilidade:'Writing', tipo:'aberta', q:'Read the text: "My name is Anna. I am 11 years old." Who is the text about?'},
+ {habilidade:'Writing', tipo:'aberta', q:'Read the text again. How old is Anna?'},
+
+ // LISTENING
+ {habilidade:'Listening', tipo:'transcricao', q:'Listen to your teacher and write what you hear.'},
+ {habilidade:'Listening', q:'Listen and choose the correct option: What is your name?', a:['How are you?','What is your name?','Where are you from?','How old are you?'], c:1},
+ {habilidade:'Listening', q:'Listen and choose the correct greeting.', a:['Good night','Good morning','Goodbye','Thanks'], c:1},
+ {habilidade:'Listening', q:'Listen and choose the correct answer.', a:['Yes, I am','I am fine','Blue','Ten'], c:1},
+
+ // READING
+ {habilidade:'Reading', q:'Read: "I like apples." What does the person like?', a:['Bananas','Apples','Oranges','Grapes'], c:1},
+ {habilidade:'Reading', q:'Read: "She is my sister." Who is she?', a:['Mother','Friend','Sister','Teacher'], c:2},
+ {habilidade:'Reading', q:'Read: "He is 12 years old." How old is he?', a:['10','11','12','13'], c:2},
+ {habilidade:'Reading', q:'Read: "My favorite color is blue." What is the favorite color?', a:['Red','Green','Blue','Yellow'], c:2}
+];
+
+/************** MONTAGEM DAS QUESTÕES **************/
+const form = document.getElementById('quiz');
+questoes.forEach((q,i)=>{
+ let html = `<h3>${i+1}. (${q.habilidade})</h3><p>${q.q}</p>`;
+ if(q.tipo==='aberta' || q.tipo==='transcricao'){
+   html += `<textarea id='q${i}'></textarea>`;
+ } else {
+   q.a.forEach((alt,j)=>{
+     html += `<input type='radio' name='q${i}' value='${j}'> ${alt}<br>`;
+   });
+ }
+ form.innerHTML += html;
+});
+
+/************** CORREÇÃO **************/
+function finalizar(){
+ let pontos = 0;
+ let total = 7; // listening (3 objetivas) + reading (4)
+ let errosHTML = '<h3>Questões para revisar</h3>';
+
+ questoes.forEach((q,i)=>{
+  if(q.a){
+   let r = document.querySelector(`input[name='q${i}']:checked`);
+   if(r && parseInt(r.value) === q.c){
+    pontos++;
+   } else {
+    errosHTML += `<p class='errada'>❌ ${q.q}<br>✔ ${q.a[q.c]}</p>`;
+   }
+  }
+ });
+
+ let nota = Math.round((pontos / total) * 10);
+ let msg = nota >= 6 ? 'Parabéns! Bom desempenho 👏' : 'Precisa revisar os conteúdos 📘';
+
+ document.getElementById('feedback').innerHTML = `<b>Nota objetiva:</b> ${nota}/10<br>${msg}<br><br><i>Writing e transcrição serão avaliados pelo professor.</i>`;
+ document.getElementById('erros').innerHTML = errosHTML;
+
+ localStorage.setItem('tentativa_modelo_mae','feito');
+
+ // ENVIO COMPLETO POR E-MAIL
+ let respostas = '\n\nRESPOSTAS DO ALUNO:\n';
+ questoes.forEach((q,i)=>{
+  if(q.a){
+    let r = document.querySelector(`input[name='q${i}']:checked`);
+    respostas += `${i+1}. (${q.habilidade}) ${r ? q.a[r.value] : 'Não respondeu'}\n`;
+  } else {
+    respostas += `${i+1}. (${q.habilidade}) ${document.getElementById('q'+i).value}\n`;
+  }
+ });
+
+ let corpo = `Escola: ${escola.value}\nAluno: ${nome.value}\nNúmero: ${numero.value}\nAno: ${ANO}\nBimestre: ${BIMESTRE}\n\nNota objetiva: ${nota}/10\n${msg}${respostas}`;
+ window.location.href = `mailto:teacher.vagnerrocha79@gmail.com?subject=Avaliação Inglês – ${ANO}&body=${encodeURIComponent(corpo)}`;
+}
+</script>
+
+</body>
+</html> 
