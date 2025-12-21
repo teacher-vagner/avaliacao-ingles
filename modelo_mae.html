@@ -2,193 +2,165 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Avaliação de Língua Inglesa</title>
-
-<link rel="stylesheet" href="style.css">
+<title>Avaliação – Língua Inglesa</title>
 <script src="config.js"></script>
+
+<style>
+body{
+  font-family:Arial, sans-serif;
+  max-width:900px;
+  margin:auto;
+  background:#f4f6fb;
+  padding:20px;
+}
+h1,h2,h3{color:#1f4fd8}
+.box{
+  background:#fff;
+  border-radius:8px;
+  padding:15px;
+  margin-bottom:20px;
+}
+.linha{
+  display:flex;
+  gap:10px;
+}
+.linha input, .linha select{
+  padding:6px;
+}
+.nome{width:70%}
+.numero{width:10%}
+.turma{width:20%}
+.errada{color:#c62828}
+.correta{color:#2e7d32}
+textarea{width:100%;height:70px}
+button{
+  padding:12px 18px;
+  font-size:16px;
+  border:none;
+  border-radius:6px;
+  background:#1f4fd8;
+  color:#fff;
+  cursor:pointer;
+}
+</style>
 </head>
 
 <body>
 
-<header>
-  <img src="teacher.jpg" alt="Professor Vagner Rocha">
-</header>
-
-<div class="container">
+<img src="midia/imagens/teacher.jpg" width="100%">
 
 <h1>Avaliação de Língua Inglesa</h1>
-<h2 id="info"></h2>
-<p><b>BNCC:</b> <span id="bncc"></span></p>
 
-<!-- ESCOLA -->
-<div style="margin-bottom:15px">
-  <label>Escola</label>
-  <input id="escola" readonly>
-</div>
+<div class="box">
+  <label>Escola</label><br>
+  <input id="escola" readonly style="width:100%"><br><br>
 
-<!-- DADOS DO ALUNO -->
-<div class="linha">
-  <div style="width:70%">
-    <label>Nome do aluno</label>
-    <input id="nome" required>
-  </div>
-
-  <div style="width:10%">
-    <label>Nº</label>
-    <input id="numero" type="number" required>
-  </div>
-
-  <div style="width:20%">
-    <label>Turma</label>
-    <select id="turma" required>
-      <option value="">Selecione</option>
+  <div class="linha">
+    <input id="nome" class="nome" placeholder="Nome do aluno">
+    <input id="numero" class="numero" type="number" placeholder="Nº">
+    <select id="turma" class="turma">
+      <option value="">Turma</option>
       <option>A</option><option>B</option><option>C</option>
       <option>D</option><option>E</option><option>F</option>
     </select>
   </div>
 </div>
 
-<form id="quiz">
+<form id="quiz" class="box"></form>
 
-<!-- Q1 WRITING -->
-<div class="questao">
-<h3>1. (Writing)</h3>
-<p>Read: "My name is Tom." Who is the text about?</p>
-<textarea id="q1"></textarea>
-</div>
-
-<!-- Q2 WRITING -->
-<div class="questao">
-<h3>2. (Writing)</h3>
-<p>Read: "I am 12 years old." How old is the person?</p>
-<textarea id="q2"></textarea>
-</div>
-
-<!-- Q3 LISTENING -->
-<div class="questao">
-<h3>3. (Listening)</h3>
-<audio controls src="midia/audios/audio1.mp3"></audio><br>
-<input type="radio" name="q3" value="0"> Good morning<br>
-<input type="radio" name="q3" value="1"> Goodbye<br>
-<input type="radio" name="q3" value="2"> Thanks<br>
-<input type="radio" name="q3" value="3"> Sorry<br>
-</div>
-
-<!-- Q4 LISTENING -->
-<div class="questao">
-<h3>4. (Listening)</h3>
-<video controls src="midia/videos/video1.mp4"></video><br>
-<input type="radio" name="q4" value="0"> At school<br>
-<input type="radio" name="q4" value="1"> At home<br>
-<input type="radio" name="q4" value="2"> At the park<br>
-<input type="radio" name="q4" value="3"> At the mall<br>
-</div>
-
-<!-- Q5 LISTENING -->
-<div class="questao">
-<h3>5. (Listening – Transcription)</h3>
-<audio controls src="midia/audios/audio2.mp3"></audio>
-<textarea id="q5"></textarea>
-</div>
-
-<!-- Q6 READING -->
-<div class="questao">
-<h3>6. (Reading)</h3>
-<img src="midia/imagens/image1.jpg">
-<input type="radio" name="q6" value="0"> A book<br>
-<input type="radio" name="q6" value="1"> A pen<br>
-<input type="radio" name="q6" value="2"> A chair<br>
-<input type="radio" name="q6" value="3"> A desk<br>
-</div>
-
-<!-- Q7 -->
-<div class="questao">
-<h3>7. (Reading)</h3>
-<input type="radio" name="q7" value="0"> Mother<br>
-<input type="radio" name="q7" value="1"> Sister<br>
-<input type="radio" name="q7" value="2"> Teacher<br>
-<input type="radio" name="q7" value="3"> Friend<br>
-</div>
-
-<!-- Q8 -->
-<div class="questao">
-<h3>8. (Grammar)</h3>
-<input type="radio" name="q8" value="0"> am<br>
-<input type="radio" name="q8" value="1"> is<br>
-<input type="radio" name="q8" value="2"> are<br>
-<input type="radio" name="q8" value="3"> be<br>
-</div>
-
-<!-- Q9 -->
-<div class="questao">
-<h3>9. (Grammar)</h3>
-<input type="radio" name="q9" value="0"> He am happy<br>
-<input type="radio" name="q9" value="1"> He is happy<br>
-<input type="radio" name="q9" value="2"> He are happy<br>
-<input type="radio" name="q9" value="3"> He be happy<br>
-</div>
-
-<!-- Q10 -->
-<div class="questao">
-<h3>10. (Reading)</h3>
-<input type="radio" name="q10" value="0"> Red<br>
-<input type="radio" name="q10" value="1"> Green<br>
-<input type="radio" name="q10" value="2"> Blue<br>
-<input type="radio" name="q10" value="3"> Yellow<br>
-</div>
-
-</form>
-
-<br>
 <button onclick="finalizar()">Enviar e ver resultado</button>
 
-<div id="resultado"></div>
-
-</div>
-
-<footer>
-© 2025 – Professor Vagner Rocha
-</footer>
+<div id="resultado" class="box"></div>
 
 <script>
-/* INICIALIZAÇÃO */
 document.getElementById("escola").value = CONFIG.escola;
-document.getElementById("info").innerText =
-  `${CONFIG.ano} – ${CONFIG.bimestre}`;
-document.getElementById("bncc").innerText = CONFIG.bncc;
 
-/* GABARITO */
-const gabarito = {
-  q3:0, q4:0, q6:0, q7:1, q8:0, q9:1, q10:2
-};
+/************** QUESTÕES **************/
+const questoes = [
+ // WRITING
+ {tipo:'aberta', habilidade:'Writing', q:'Read: "My name is Anna." Who is the text about?', r:'Anna'},
+ {tipo:'aberta', habilidade:'Writing', q:'Read: "I am 11 years old." How old is the person?', r:'11'},
+
+ // LISTENING
+ {tipo:'aberta', habilidade:'Listening', q:'Listen to the audio and write what you hear.', r:'hello'},
+ {habilidade:'Listening', q:'Choose the correct greeting.', a:['Good night','Good morning','Goodbye','Thanks'], c:1},
+ {habilidade:'Listening', q:'Choose the correct question.', a:['How are you?','What is your name?','Where are you from?','How old are you?'], c:1},
+ {habilidade:'Listening', q:'Choose the correct answer.', a:['Blue','Ten','Yes, I am','I am fine'], c:3},
+
+ // READING / GRAMMAR
+ {habilidade:'Reading', q:'I ___ a student.', a:['am','is','are','be'], c:0},
+ {habilidade:'Reading', q:'She ___ my friend.', a:['am','is','are','be'], c:1},
+ {habilidade:'Reading', q:'They ___ students.', a:['am','is','are','be'], c:2},
+ {habilidade:'Reading', q:'He ___ 12 years old.', a:['am','is','are','be'], c:1}
+];
+
+/************** MONTAGEM **************/
+const form = document.getElementById('quiz');
+questoes.forEach((q,i)=>{
+ let html = `<h3>${i+1}. (${q.habilidade})</h3><p>${q.q}</p>`;
+ if(q.tipo === 'aberta'){
+   html += `<textarea id="q${i}"></textarea>`;
+ } else {
+   q.a.forEach((alt,j)=>{
+     html += `<input type="radio" name="q${i}" value="${j}"> ${alt}<br>`;
+   });
+ }
+ form.innerHTML += html;
+});
+
+/************** CORREÇÃO **************/
 
 function finalizar(){
   let pontos = 0;
-  let total = Object.keys(gabarito).length;
+  let total = questoes.length;
+  let respostasTexto = "";
 
-  for(let q in gabarito){
-    let r = document.querySelector(`input[name="${q}"]:checked`);
-    if(r && Number(r.value) === gabarito[q]) pontos++;
-  }
+  questoes.forEach((q,i)=>{
+    if(q.a){
+      const r = document.querySelector(`input[name="q${i}"]:checked`);
+      if(r && Number(r.value) === q.c){
+        pontos++;
+        respostasTexto += `${i+1}. (${q.habilidade}) ✔ ${q.a[r.value]}\n`;
+      } else {
+        respostasTexto += `${i+1}. (${q.habilidade}) ✘ ${r ? q.a[r.value] : 'Não respondeu'} | Correta: ${q.a[q.c]}\n`;
+      }
+    } else {
+      const txt = document.getElementById(`q${i}`).value.trim();
+      if(txt.toLowerCase() === q.r.toLowerCase()) pontos++;
+      respostasTexto += `${i+1}. (${q.habilidade}) ${txt}\n`;
+    }
+  });
 
-  let nota = Math.round((pontos/total)*10);
+  const nota = Math.round((pontos / total) * 10);
+  const feedback = nota >= 6 ? "Parabéns! Bom desempenho." : "Precisa revisar os conteúdos.";
 
+  // MOSTRA NA TELA
   document.getElementById("resultado").innerHTML =
-    `<h3>Nota: ${nota}/10</h3>`;
+    `Aluno: ${nome.value}<br>
+     Número: ${numero.value}<br>
+     Turma: ${turma.value}<br>
+     Nota: ${nota}/10<br>
+     ${feedback}`;
 
-  let corpo = `
-Escola: ${escola.value}
-Aluno: ${nome.value}
-Número: ${numero.value}
-Turma: ${turma.value}
+  // MONTA EMAIL
+  const corpoEmail =
+`ESCOLA: ${escola.value}
+ALUNO: ${nome.value}
+NÚMERO: ${numero.value}
+TURMA: ${turma.value}
 
-Nota: ${nota}/10
-`;
+NOTA: ${nota}/10
+FEEDBACK: ${feedback}
+
+RESPOSTAS DO ALUNO:
+${respostasTexto}`;
 
   window.location.href =
-    `mailto:${CONFIG.emailProfessor}?subject=Avaliação Inglês&body=${encodeURIComponent(corpo)}`;
+    `mailto:${CONFIG.emailProfessor}?subject=Avaliação de Inglês&body=${encodeURIComponent(corpoEmail)}`;
 }
 </script>
 
+
 </body>
 </html>
+
