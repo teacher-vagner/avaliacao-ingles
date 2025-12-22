@@ -24,9 +24,7 @@ h1,h2,h3{color:#1f4fd8}
   display:flex;
   gap:10px;
 }
-.linha input, .linha select{
-  padding:6px;
-}
+.linha input, .linha select{padding:6px}
 .nome{width:70%}
 .numero{width:10%}
 .turma{width:20%}
@@ -45,7 +43,7 @@ button{
 
 <body>
 
-<img src="teacher.jpg" width="100%">
+<img src="midia/imagens/teacher.jpg" width="100%">
 
 <h1>Avaliação de Língua Inglesa</h1>
 
@@ -76,102 +74,50 @@ document.getElementById("escola").value = CONFIG.escola;
 /************** QUESTÕES **************/
 const questoes = [
 
-  // WRITING
-  
   {
-    tipo:'aberta', habilidade:'Writing',
+    tipo:'aberta',
+    habilidade:'Writing',
     q: `
-      <p>Read the text and answer the question below: <br> Who is your best friends name? </p>
-      <img src="midias/imagens/imagem1.jpg" width="500" height="250">
+      <p>Who is your best friend's name?</p>
+      <img src="midia/imagens/imagem1.jpg" width="500">
     `,
-    r: 'Julia'
+    r:['julia']
   },
-  
-    { tipo:'aberta', habilidade:'Writing',
-    q:'<p>What is Julia like?</p>', r:'smart' , 'funny'
-    },
 
-  // LISTENING (COM ÁUDIO)
   {
-    habilidade:'Listening',
-    q: `
-      <p>Listen to the audio and choose the correct answer:  <br> Did we play tennis last week? No, we didn't. </p>
-      <audio controls style="width:100%; margin:10px 0;">
-        <source src="midias/audios/audio1.mp3" type="audio/mpeg">
-      </audio>
-    `,
-    a:['No, you did not.','No, we did not.','No, we did.','No, they did  not.'],
-    c:1
+    tipo:'aberta',
+    habilidade:'Writing',
+    q:'<p>What is Julia like?</p>',
+    r:['smart','funny']
   },
 
   {
     habilidade:'Listening',
     q: `
-      <p>Listen to the audio and choose the correct answer:  <br> Did we play tennis last week? No, we didn't. </p>
-      <audio controls style="width:100%; margin:10px 0;">
-        <source src="midias/audios/audio1.mp3" type="audio/mpeg">
+      <p>Listen and choose:</p>
+      <audio controls style="width:100%">
+        <source src="midia/audios/audio1.mp3" type="audio/mpeg">
       </audio>
     `,
-    a:['No, you did not.','No, we did not.','No, we did.','No, they did  not.'],
+    a:['No, you did not.','No, we did not.','No, we did.','No, they did not.'],
     c:1
   },
 
-  {
-    habilidade:'Listening',
-    q: `
-      <p>Listen to the audio and choose the correct answer:  <br> Did we play tennis last week? No, we didn't. </p>
-      <audio controls style="width:100%; margin:10px 0;">
-        <source src="midias/audios/audio1.mp3" type="audio/mpeg">
-      </audio>
-    `,
-    a:['No, you did not.','No, we did not.','No, we did.','No, they did  not.'],
-    c:1
-  },
-
-   {
-    habilidade:'Listening',
-    q: `
-      <p>Listen to the audio and choose the correct answer:  <br> Did we play tennis last week? No, we didn't. </p>
-      <audio controls style="width:100%; margin:10px 0;">
-        <source src="midias/audios/audio1.mp3" type="audio/mpeg">
-      </audio>
-    `,
-    a:['No, you did not.','No, we did not.','No, we did.','No, they did  not.'],
-    c:1
-  },
-
-  // READING / GRAMMAR
-  { habilidade:'Reading',
-    q:'<p>She ___ my friend.</p>',
-    a:['am','is','are','be'], c:1 },
-
-  { habilidade:'Reading',
-    q:'<p>They ___ students.</p>',
-    a:['am','is','are','be'], c:2 },
-
-  { habilidade:'Reading',
-    q:'<p>He ___ 12 years old.</p>',
-    a:['am','is','are','be'], c:1 },
-
-  { habilidade:'Reading',
-    q:'<p>I ___ a student.</p>',
-    a:['am','is','are','be'], c:0 }
+  {habilidade:'Reading', q:'<p>She ___ my friend.</p>', a:['am','is','are','be'], c:1},
+  {habilidade:'Reading', q:'<p>They ___ students.</p>', a:['am','is','are','be'], c:2},
+  {habilidade:'Reading', q:'<p>He ___ 12 years old.</p>', a:['am','is','are','be'], c:1},
+  {habilidade:'Reading', q:'<p>I ___ a student.</p>', a:['am','is','are','be'], c:0}
 ];
 
 /************** MONTAGEM **************/
 const form = document.getElementById('quiz');
 
 questoes.forEach((q,i)=>{
-  let html = `<h3>${i+1}. (${q.habilidade})</h3>`;
-  html += q.q;
+  let html = `<h3>${i+1}. (${q.habilidade})</h3>` + q.q;
 
   if(q.a){
     q.a.forEach((alt,j)=>{
-      html += `
-        <label>
-          <input type="radio" name="q${i}" value="${j}">
-          ${alt}
-        </label><br>`;
+      html += `<label><input type="radio" name="q${i}" value="${j}"> ${alt}</label><br>`;
     });
   } else {
     html += `<textarea id="q${i}"></textarea>`;
@@ -180,7 +126,7 @@ questoes.forEach((q,i)=>{
   form.innerHTML += html;
 });
 
-/************** CORREÇÃO + EMAIL **************/
+/************** CORREÇÃO **************/
 function finalizar(){
   let pontos = 0;
   let respostasTexto = "";
@@ -196,45 +142,20 @@ function finalizar(){
       }
     } else {
       const txt = document.getElementById(`q${i}`).value.toLowerCase();
-
-if (q.r.some(palavra => txt.includes(palavra))) {
-  pontos++;
-} 
-      {
+      if(q.r.some(p => txt.includes(p))) pontos++;
       respostasTexto += `${i+1}. ${txt}\n`;
     }
   });
 
   const nota = Math.round((pontos / questoes.length) * 10);
-  const feedback = nota >= 6 ? "Parabéns! Bom desempenho." : "Precisa revisar os conteúdos.";
 
   document.getElementById("resultado").innerHTML =
-    `Aluno: ${nome.value}<br>
-     Número: ${numero.value}<br>
-     Turma: ${turma.value}<br>
-     Nota: ${nota}/10<br>
-     ${feedback}`;
-
-  const corpoEmail =
-`ESCOLA: ${escola.value}
-ALUNO: ${nome.value}
-NÚMERO: ${numero.value}
-TURMA: ${turma.value}
-
-NOTA: ${nota}/10
-FEEDBACK: ${feedback}
-
-RESPOSTAS:
-${respostasTexto}`;
+    `Aluno: ${nome.value}<br>Nota: ${nota}/10`;
 
   window.location.href =
-    `mailto:${CONFIG.emailProfessor}?subject=Avaliação de Inglês&body=${encodeURIComponent(corpoEmail)}`;
+    `mailto:${CONFIG.emailProfessor}?subject=Avaliação de Inglês&body=${encodeURIComponent(respostasTexto)}`;
 }
 </script>
 
 </body>
 </html>
-
-
-
-
