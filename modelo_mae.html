@@ -45,7 +45,7 @@ button{
 
 <body>
 
-<img src="midia/imagens/teacher.jpg" width="100%">
+<img src="teacher.jpg" width="100%">
 
 <h1>Avaliação de Língua Inglesa</h1>
 
@@ -84,11 +84,11 @@ const questoes = [
       <p>Read the text and answer the question below: <br> Who is your best friends name? </p>
       <img src="midias/imagens/imagem1.jpg" width="500" height="250">
     `,
-    r:'Julia is your best friend name.'
+    r:['Julia']
   },
   
     { tipo:'aberta', habilidade:'Writing',
-    q:'<p>What is Julia like?</p>', r:'Julia is very smart and funny.'
+    q:'<p>What is Julia like?</p>', r:['smart' , 'funny']
     },
 
   // LISTENING (COM ÁUDIO)
@@ -195,8 +195,10 @@ function finalizar(){
         respostasTexto += `${i+1}. ✘ ${r ? q.a[r.value] : 'Não respondeu'} | Correta: ${q.a[q.c]}\n`;
       }
     } else {
-      const txt = document.getElementById(`q${i}`).value.trim();
-      if(txt.toLowerCase() === q.r.toLowerCase()) pontos++;
+      cconst txt = document.getElementById(`q${i}`).value.toLowerCase();
+
+if (q.r.some(palavra => txt.includes(palavra))) {
+  pontos++;
       respostasTexto += `${i+1}. ${txt}\n`;
     }
   });
@@ -230,4 +232,3 @@ ${respostasTexto}`;
 
 </body>
 </html>
-
