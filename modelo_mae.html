@@ -2,16 +2,15 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Avaliação – Língua Inglesa</title>
-<script src="config.js"></script>
+<title>6º Ano – Inglês – 1º Bimestre</title>
 
 <style>
 body{
-  font-family:Arial, sans-serif;
-  max-width:900px;
-  margin:auto;
-  background:#f4f6fb;
-  padding:20px;
+  font-family: Arial, sans-serif;
+  max-width: 900px;
+  margin: auto;
+  background: #f4f6fb;
+  padding: 20px;
 }
 h1,h2,h3{color:#1f4fd8}
 .box{
@@ -24,7 +23,7 @@ h1,h2,h3{color:#1f4fd8}
   display:flex;
   gap:10px;
 }
-.linha input, .linha select{
+.linha input,.linha select{
   padding:6px;
 }
 .nome{width:70%}
@@ -40,43 +39,32 @@ button{
   color:#fff;
   cursor:pointer;
 }
+.bncc{
+  font-size:13px;
+  color:#555;
+  margin-bottom:5px;
+}
 </style>
 </head>
 
 <body>
 
-<img src="teacher.jpg" width="100%">
-
 <h1>Avaliação de Língua Inglesa</h1>
+<h3>6º Ano – 1º Bimestre</h3>
 
-<!-- DADOS DO ALUNO -->
 <div class="box">
   <label>Escola</label><br>
-  <input id="escola" readonly style="width:100%"><br><br>
+  <input id="escola" style="width:100%" placeholder="Nome da escola"><br><br>
 
   <div class="linha">
     <input id="nome" class="nome" placeholder="Nome do aluno">
-    <input id="numero" class="numero" type="number" placeholder="Nº">
+    <input id="numero" class="numero" placeholder="Nº">
     <select id="turma" class="turma">
       <option value="">Turma</option>
       <option>A</option><option>B</option><option>C</option>
       <option>D</option><option>E</option><option>F</option>
     </select>
   </div>
-
-  <br>
-
-  <label>Série</label><br>
-  <select id="serie" style="width:100%; padding:6px">
-    <option value="">Selecione a série</option>
-    <option>6º Ano</option>
-    <option>7º Ano</option>
-    <option>8º Ano</option>
-    <option>9º Ano</option>
-    <option>1º EM</option>
-    <option>2º EM</option>
-    <option>3º EM</option>
-  </select>
 </div>
 
 <form id="quiz" class="box"></form>
@@ -86,89 +74,89 @@ button{
 <div id="resultado" class="box"></div>
 
 <script>
-/************** CONFIG **************/
-document.getElementById("escola").value = CONFIG.escola;
+/**************** CONFIG FIXA ****************/
+const SERIE = "6º Ano";
+const BIMESTRE = "1º Bimestre";
+const EMAIL_PROFESSOR = "teacher.vagnerrocha79@gmail.com";
 
-/************** QUESTÕES **************/
-const questoes = [
-
-  {
-    tipo:'aberta',
-    habilidade:'Writing',
-    q: `
-      <p>Who is your best friend's name?</p>
-      <img src="midia/imagens/imagem1.jpg" width="400">
-    `,
-    r:['julia']
-  },
+/**************** BANCO DE QUESTÕES ****************/
+const bancoQuestoes = [
 
   {
-    tipo:'aberta',
-    habilidade:'Writing',
-    q:'<p>What is Julia like?</p>',
-    r:['smart','funny']
+    habilidade:"Writing",
+    bncc:"EF06LI01",
+    tipo:"aberta",
+    q:`<p>What is your best friend's name?</p>`,
+    r:["julia"]
   },
 
   {
-    habilidade:'Listening',
-    q: `
-      <p>Listen and choose:</p>
-      <audio controls style="width:100%">
-        <source src="midia/audios/audio1.mp3" type="audio/mpeg">
-      </audio>
-    `,
-    a:['No, you did not.','No, we did not.','No, we did.','No, they did not.'],
-    c:1
+    habilidade:"Writing",
+    bncc:"EF06LI02",
+    tipo:"aberta",
+    q:`<p>Describe your best friend.</p>`,
+    r:["smart","funny","kind"]
   },
-{
-    habilidade:'Listening',
-    q: `
-      <p>Listen and choose:</p>
-      <audio controls style="width:100%">
-        <source src="midia/audios/audio1.mp3" type="audio/mpeg">
-      </audio>
-    `,
-    a:['No, you did not.','No, we did not.','No, we did.','No, they did not.'],
-    c:1
-  },
+
   {
-    habilidade:'Listening',
-    q: `
-      <p>Listen and choose:</p>
-      <audio controls style="width:100%">
-        <source src="midia/audios/audio1.mp3" type="audio/mpeg">
+    habilidade:"Listening",
+    bncc:"EF06LI03",
+    tipo:"objetiva",
+    q:`
+      <p>Listen and choose the correct answer.</p>
+      <audio controls>
+        <source src="midia/audios/audio1.mp3">
       </audio>
     `,
-    a:['No, you did not.','No, we did not.','No, we did.','No, they did not.'],
+    a:["No, you did not.","No, we did not.","No, we did.","No, they did not."],
     c:1
   },
+
   {
-    habilidade:'Listening',
-    q: `
-      <p>Listen and choose:</p>
-      <audio controls style="width:100%">
-        <source src="midia/audios/audio1.mp3" type="audio/mpeg">
-      </audio>
-    `,
-    a:['No, you did not.','No, we did not.','No, we did.','No, they did not.'],
+    habilidade:"Reading",
+    bncc:"EF06LI04",
+    tipo:"objetiva",
+    q:`<p>She ___ my friend.</p>`,
+    a:["am","is","are","be"],
     c:1
   },
-  
-    {habilidade:'Reading', q:'<p>She ___ my friend.</p>', a:['am','is','are','be'], c:1},
-  {habilidade:'Reading', q:'<p>They ___ students.</p>', a:['am','is','are','be'], c:2},
-  {habilidade:'Reading', q:'<p>He ___ 12 years old.</p>', a:['am','is','are','be'], c:1},
-  {habilidade:'Reading', q:'<p>I ___ a student.</p>', a:['am','is','are','be'], c:0}
+
+  {
+    habilidade:"Grammar",
+    bncc:"EF06LI05",
+    tipo:"objetiva",
+    q:`<p>I ___ a student.</p>`,
+    a:["am","is","are","be"],
+    c:0
+  },
+
+  /* 👉 CONTINUE CRIANDO ATÉ 60 OU MAIS */
 ];
 
-/************** MONTAGEM **************/
-const form = document.getElementById('quiz');
+/**************** SORTEIO ****************/
+function sortearQuestoes(qtd){
+  return bancoQuestoes
+    .sort(()=>0.5-Math.random())
+    .slice(0,qtd);
+}
+
+const questoes = sortearQuestoes(10);
+
+/**************** MONTAGEM ****************/
+const form = document.getElementById("quiz");
 
 questoes.forEach((q,i)=>{
-  let html = `<h3>${i+1}. (${q.habilidade})</h3>` + q.q;
+  let html = `<h3>${i+1}. (${q.habilidade})</h3>`;
+  html += `<div class="bncc">BNCC: ${q.bncc}</div>`;
+  html += q.q;
 
-  if(q.a){
+  if(q.tipo==="objetiva"){
     q.a.forEach((alt,j)=>{
-      html += `<label><input type="radio" name="q${i}" value="${j}"> ${alt}</label><br>`;
+      html += `
+      <label>
+        <input type="radio" name="q${i}" value="${j}">
+        ${alt}
+      </label><br>`;
     });
   } else {
     html += `<textarea id="q${i}"></textarea>`;
@@ -177,55 +165,51 @@ questoes.forEach((q,i)=>{
   form.innerHTML += html;
 });
 
-/************** CORREÇÃO + ENVIO **************/
+/**************** CORREÇÃO ****************/
 function finalizar(){
   let pontos = 0;
-  let respostasTexto = "";
+  let respostas = "";
 
   questoes.forEach((q,i)=>{
-    if(q.a){
+    if(q.tipo==="objetiva"){
       const r = document.querySelector(`input[name="q${i}"]:checked`);
-      if(r && Number(r.value) === q.c){
-        pontos++;
-        respostasTexto += `${i+1}. ✔ ${q.a[r.value]}\n`;
-      } else {
-        respostasTexto += `${i+1}. ✘ ${r ? q.a[r.value] : 'Não respondeu'} | Correta: ${q.a[q.c]}\n`;
-      }
+      if(r && Number(r.value)===q.c) pontos++;
+      respostas += `${i+1}. ${r ? q.a[r.value] : "Não respondeu"}\n`;
     } else {
       const txt = document.getElementById(`q${i}`).value.toLowerCase();
-      if(q.r.some(p => txt.includes(p))) pontos++;
-      respostasTexto += `${i+1}. ${txt}\n`;
+      if(q.r.some(p=>txt.includes(p))) pontos++;
+      respostas += `${i+1}. ${txt}\n`;
     }
   });
 
-  const nota = Math.round((pontos / questoes.length) * 10);
-  const feedback = nota >= 6 ? "Parabéns! Bom desempenho." : "Precisa revisar os conteúdos.";
+  const nota = Math.round((pontos/questoes.length)*10);
 
-  document.getElementById("resultado").innerHTML =
-    `Aluno: ${nome.value}<br>
-     Série: ${serie.value}<br>
-     Turma: ${turma.value}<br>
-     Nota: ${nota}/10<br>
-     ${feedback}`;
+  document.getElementById("resultado").innerHTML = `
+    Aluno: ${nome.value}<br>
+    Série: ${SERIE}<br>
+    Turma: ${turma.value}<br>
+    Nota: ${nota}/10
+  `;
 
-  const corpoEmail =
-`ESCOLA: ${escola.value}
+  const corpo = `
+ESCOLA: ${escola.value}
 ALUNO: ${nome.value}
-NÚMERO: ${numero.value}
-SÉRIE: ${serie.value}
+SÉRIE: ${SERIE}
+BIMESTRE: ${BIMESTRE}
 TURMA: ${turma.value}
 
 NOTA: ${nota}/10
-FEEDBACK: ${feedback}
 
-RESPOSTAS DO ALUNO:
-${respostasTexto}`;
+RESPOSTAS:
+${respostas}
+`;
 
   window.location.href =
-    `mailto:${CONFIG.emailProfessor}?subject=Avaliação de Inglês&body=${encodeURIComponent(corpoEmail)}`;
+    `mailto:${EMAIL_PROFESSOR}?subject=Avaliação Inglês 6º Ano&body=${encodeURIComponent(corpo)}`;
 }
 </script>
 
 </body>
 </html>
+
 
