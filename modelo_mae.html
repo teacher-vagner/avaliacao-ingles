@@ -39,11 +39,9 @@ button{
   color:#fff;
   cursor:pointer;
 }
-.bncc{
-  font-size:13px;
-  color:#555;
-  margin-bottom:5px;
-}
+.bncc{font-size:13px;color:#555}
+.correta{color:#2e7d32;font-weight:bold}
+.errada{color:#c62828;font-weight:bold}
 </style>
 </head>
 
@@ -74,52 +72,61 @@ button{
 <div id="resultado" class="box"></div>
 
 <script>
-/**************** CONFIG FIXA ****************/
+/*************** CONFIG ***************/
 const SERIE = "6º Ano";
 const BIMESTRE = "1º Bimestre";
 const EMAIL_PROFESSOR = "teacher.vagnerrocha79@gmail.com";
 
-/**************** BANCO DE QUESTÕES ****************/
+/*************** BANCO DE QUESTÕES ***************/
 const bancoQuestoes = [
 
+  /* WRITING */
   {
     habilidade:"Writing",
     bncc:"EF06LI01",
     tipo:"aberta",
-    q:`<p>Reorder and make sentences: our/ after/ We/ homework/ did/ school/</p>`,
+    q:`<p>Reorder and make sentences:<br>our / after / We / homework / did / school</p>`,
     r:["We did our homework after school."]
   },
-
   {
     habilidade:"Writing",
     bncc:"EF06LI01",
     tipo:"aberta",
-    q:`<p>Reorder and make sentences: park/ friend/ met/ at/ They/ the/ their/</p>`,
-    r:["They met their friends at the park."]
+    q:`<p>Reorder and make sentences:<br>school / to / Did / you / yesterday / go</p>`,
+    r:["Did you go to school yesterday?"]
   },
 
-  {
-    habilidade:"Writing",
-    bncc:"EF06LI01",
-    tipo:"aberta",
-    q:`<p>Reorder and make sentences: school/ to/ Did/ you/ yesterday/ go/</p>`,
-    r:["Did you go to school yesterday?."]
-  },
-  
+  /* LISTENING BLOCO */
   {
     habilidade:"Listening",
     bncc:"EF06LI03",
-    tipo:"objetiva",
-    q:`
-      <p>Listen and choose the correct answer.</p>
-      <audio controls>
-        <source src="midia/audios/audio1.mp3">
-      </audio>
-    `,
-    a:["No, you did not.","No, we did not.","No, we did.","No, they did not."],
-    c:1
+    tipo:"listeningBloco",
+    audio:"midia/audios/audio2.mp3",
+    perguntas:[
+      {
+        q:"Where did Kate go last year?",
+        a:["to Paris.","to London.","to Rome.","to Brazil."],
+        c:0
+      },
+      {
+        q:"Who did Kate go with?",
+        a:["her sister","her mother","a friend","her father"],
+        c:1
+      },
+      {
+        q:"How did she get there?",
+        a:["by car","by plane","by train","by taxi"],
+        c:1
+      },
+      {
+        q:"How long did they stay in Paris?",
+        a:["five days","five weeks","a month","a week"],
+        c:0
+      }
+    ]
   },
 
+  /* READING / GRAMMAR */
   {
     habilidade:"Reading",
     bncc:"EF06LI04",
@@ -128,7 +135,14 @@ const bancoQuestoes = [
     a:["am","is","are","be"],
     c:1
   },
-
+  {
+    habilidade:"Reading",
+    bncc:"EF06LI04",
+    tipo:"objetiva",
+    q:`<p>They ___ my best friends.</p>`,
+    a:["am","is","are","be"],
+    c:2
+  },
   {
     habilidade:"Grammar",
     bncc:"EF06LI05",
@@ -136,89 +150,105 @@ const bancoQuestoes = [
     q:`<p>I ___ a student.</p>`,
     a:["am","is","are","be"],
     c:0
-  },
-
-  /* 👉 CONTINUE CRIANDO ATÉ 60 OU MAIS */
+  }
 ];
 
-/**************** SORTEIO ****************/
+/*************** SORTEIO ***************/
 function sortearQuestoes(qtd){
-  return bancoQuestoes
-    .sort(()=>0.5-Math.random())
-    .slice(0,qtd);
+  return bancoQuestoes.sort(()=>0.5-Math.random()).slice(0,qtd);
 }
+const questoes = sortearQuestoes(5);
 
-const questoes = sortearQuestoes(10);
-
-/**************** MONTAGEM ****************/
+/*************** MONTAGEM ***************/
 const form = document.getElementById("quiz");
+let indice = 0;
 
-questoes.forEach((q,i)=>{
-  let html = `<h3>${i+1}. (${q.habilidade})</h3>`;
-  html += `<div class="bncc">BNCC: ${q.bncc}</div>`;
-  html += q.q;
-
-  if(q.tipo==="objetiva"){
-    q.a.forEach((alt,j)=>{
-      html += `
-      <label>
-        <input type="radio" name="q${i}" value="${j}">
-        ${alt}
-      </label><br>`;
+questoes.forEach(q=>{
+  if(q.tipo==="listeningBloco"){
+    let html = `<h3>Listening</h3><div class="bncc">BNCC: ${q.bncc}</div>`;
+    html += `<audio controls><source src="${q.audio}"></audio>`;
+    q.perguntas.forEach(p=>{
+      indice++;
+      html += `<p>${indice}. ${p.q}</p>`;
+      p.a.forEach((alt,j)=>{
+        html += `<label><input type="radio" name="q${indice}" value="${j}"> ${alt}</label><br>`;
+      });
     });
+    form.innerHTML += html;
   } else {
-    html += `<textarea id="q${i}"></textarea>`;
+    indice++;
+    let html = `<h3>${indice}. (${q.habilidade})</h3>`;
+    html += `<div class="bncc">BNCC: ${q.bncc}</div>`;
+    html += q.q;
+    if(q.tipo==="objetiva"){
+      q.a.forEach((alt,j)=>{
+        html += `<label><input type="radio" name="q${indice}" value="${j}"> ${alt}</label><br>`;
+      });
+    } else {
+      html += `<textarea id="q${indice}"></textarea>`;
+    }
+    form.innerHTML += html;
   }
-
-  form.innerHTML += html;
 });
 
-/**************** CORREÇÃO ****************/
+/*************** CORREÇÃO ***************/
 function finalizar(){
   let pontos = 0;
-  let respostas = "";
+  let total = indice;
+  let feedback = "";
 
-  questoes.forEach((q,i)=>{
-    if(q.tipo==="objetiva"){
+  let i = 0;
+  questoes.forEach(q=>{
+    if(q.tipo==="listeningBloco"){
+      q.perguntas.forEach(p=>{
+        i++;
+        const r = document.querySelector(`input[name="q${i}"]:checked`);
+        if(r && Number(r.value)===p.c){
+          pontos++;
+          feedback += `<p class="correta">${i}. ✔ Correta</p>`;
+        } else {
+          feedback += `<p class="errada">${i}. ✘ Incorreta | ${p.a[p.c]}</p>`;
+        }
+      });
+    } else if(q.tipo==="objetiva"){
+      i++;
       const r = document.querySelector(`input[name="q${i}"]:checked`);
-      if(r && Number(r.value)===q.c) pontos++;
-      respostas += `${i+1}. ${r ? q.a[r.value] : "Não respondeu"}\n`;
+      if(r && Number(r.value)===q.c){
+        pontos++;
+        feedback += `<p class="correta">${i}. ✔ Correta</p>`;
+      } else {
+        feedback += `<p class="errada">${i}. ✘ Incorreta | ${q.a[q.c]}</p>`;
+      }
     } else {
-      const txt = document.getElementById(`q${i}`).value.toLowerCase();
-      if(q.r.some(p=>txt.includes(p))) pontos++;
-      respostas += `${i+1}. ${txt}\n`;
+      i++;
+      const txt = document.getElementById(`q${i}`).value.trim();
+      if(q.r.includes(txt)){
+        pontos++;
+        feedback += `<p class="correta">${i}. ✔ Correta</p>`;
+      } else {
+        feedback += `<p class="errada">${i}. ✘ Incorreta | ${q.r[0]}</p>`;
+      }
     }
   });
 
-  const nota = Math.round((pontos/questoes.length)*10);
+  const nota = Math.round((pontos/total)*10);
 
   document.getElementById("resultado").innerHTML = `
-    Aluno: ${nome.value}<br>
-    Série: ${SERIE}<br>
-    Turma: ${turma.value}<br>
-    Nota: ${nota}/10
+    <strong>Aluno:</strong> ${nome.value}<br>
+    <strong>Série:</strong> ${SERIE}<br>
+    <strong>Turma:</strong> ${turma.value}<br>
+    <strong>Nota:</strong> ${nota}/10<hr>
+    ${feedback}
   `;
 
-  const corpo = `
-ESCOLA: ${escola.value}
-ALUNO: ${nome.value}
-SÉRIE: ${SERIE}
-BIMESTRE: ${BIMESTRE}
-TURMA: ${turma.value}
-
-NOTA: ${nota}/10
-
-RESPOSTAS:
-${respostas}
-`;
-
   window.location.href =
-    `mailto:${EMAIL_PROFESSOR}?subject=Avaliação Inglês 6º Ano&body=${encodeURIComponent(corpo)}`;
+    `mailto:${EMAIL_PROFESSOR}?subject=Avaliação Inglês 6º Ano&body=${encodeURIComponent("Aluno: "+nome.value+"\nNota: "+nota)}`;
 }
 </script>
 
 </body>
 </html>
+
 
 
 
