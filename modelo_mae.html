@@ -195,7 +195,7 @@ function finalizar(){
         respostasTexto += `${i+1}. ✘ ${r ? q.a[r.value] : 'Não respondeu'} | Correta: ${q.a[q.c]}\n`;
       }
     } else {
-      cconst txt = document.getElementById(`q${i}`).value.toLowerCase();
+      const txt = document.getElementById(`q${i}`).value.toLowerCase();
 
 if (q.r.some(palavra => txt.includes(palavra))) {
   pontos++;
@@ -232,4 +232,5 @@ ${respostasTexto}`;
 
 </body>
 </html>
+
 
