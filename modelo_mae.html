@@ -1,9 +1,16 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="config.js"></script>
 <meta charset="UTF-8">
 <title>6º Ano – Inglês – 1º Bimestre</title>
+
+<script>
+/**************** CONFIG GLOBAL ****************/
+const CONFIG = {
+  escola: "English Vagner's School",
+  emailProfessor: "teacher.vagnerrocha79@gmail.com"
+};
+</script>
 
 <style>
 body{font-family:Arial;max-width:900px;margin:auto;background:#f4f6fb;padding:20px}
@@ -12,7 +19,7 @@ h1,h2,h3{color:#1f4fd8}
 .linha{display:flex;gap:10px}
 .linha input,.linha select{padding:6px}
 .nome{width:70%}.numero{width:10%}.turma{width:20%}
-textarea{width:100%;height:60px;margin-bottom:8px}
+textarea{width:100%;height:70px}
 button{padding:12px 18px;font-size:16px;border:none;border-radius:6px;background:#1f4fd8;color:#fff;cursor:pointer}
 .bncc{font-size:13px;color:#555}
 .correta{color:#2e7d32;font-weight:bold}
@@ -35,25 +42,30 @@ button{padding:12px 18px;font-size:16px;border:none;border-radius:6px;background
 <select id="turma" class="turma">
 <option value="">Turma</option>
 <option>A</option><option>B</option><option>C</option>
+<option>D</option><option>E</option><option>F</option>
 </select>
 </div>
 </div>
 
 <form id="quiz" class="box"></form>
-<button onclick="finalizar()">Enviar e ver resultado</button>
+<button type="button" onclick="finalizar()">Enviar e ver resultado</button>
 <div id="resultado" class="box"></div>
 
 <script>
-document.addEventListener("DOMContentLoaded",()=>{
- document.getElementById("escola").value = CONFIG.escola;
-});
-
-const EMAIL_PROFESSOR = "teacher.vagnerrocha79@gmail.com";
+/**************** CONSTANTES ****************/
 const SERIE="6º Ano";
 const BIMESTRE="1º Bimestre";
 
-function normalizar(t){return t.trim().replace(/\s+/g," ");}
+/**************** FUNÇÕES ****************/
+function normalizar(t){
+  return t.trim().replace(/\s+/g," ").toLowerCase();
+}
 
+function sortear(lista, qtd){
+  return [...lista].sort(()=>0.5-Math.random()).slice(0,qtd);
+}
+
+/**************** BANCO DE QUESTÕES ****************/
 const blocos = [
 
 {
@@ -61,11 +73,11 @@ const blocos = [
  bncc:"EF06LI01",
  tipo:"writing",
  itens:[
-  {id:"W01",enunciado:"our / did / We / school / homework / after",resposta:"We did our homework after school."},
-  {id:"W02",enunciado:"go / yesterday / Did / to / school / you",resposta:"Did you go to school yesterday?"},
-  {id:"W03",enunciado:"played / yesterday / soccer / They",resposta:"They played soccer yesterday."},
-  {id:"W04",enunciado:"last / studied / English / She / night",resposta:"She studied English last night."},
-  {id:"W05",enunciado:"grandparents / visited / our / We",resposta:"We visited our grandparents."}
+  {id:"W01",enunciado:"our / did / We / school / homework / after",resposta:"we did our homework after school."},
+  {id:"W02",enunciado:"go / yesterday / Did / to / school / you",resposta:"did you go to school yesterday?"},
+  {id:"W03",enunciado:"played / yesterday / soccer / They",resposta:"they played soccer yesterday."},
+  {id:"W04",enunciado:"last / studied / English / She / night",resposta:"she studied english last night."},
+  {id:"W05",enunciado:"grandparents / visited / our / We",resposta:"we visited our grandparents."}
  ]
 },
 
@@ -112,120 +124,89 @@ const blocos = [
 
 ];
 
+/**************** MONTAGEM COM SORTEIO ****************/
+document.getElementById("escola").value = CONFIG.escola;
 const form=document.getElementById("quiz");
-let n=0;
+let contador=0;
+let prova=[];
 
 blocos.forEach(b=>{
- form.innerHTML+=`<h3>${b.hab}</h3><div class="bncc">BNCC: ${b.bncc}</div>`;
+  const sorteadas = sortear(b.itens,5);
+  prova.push({ ...b, itens:sorteadas });
 
- if(b.tipo==="writing"){
-  b.itens.forEach(item=>{
-   n++;
-   form.innerHTML+=`<p>${n}. Reorder: ${item.enunciado}</p>
-   <div class="bncc">ID: ${item.id}</div>
-   <textarea id="q${n}"></textarea>`;
-  });
- }
-
- else{
+  form.innerHTML+=`<h3>${b.hab}</h3><div class="bncc">BNCC: ${b.bncc}</div>`;
   if(b.audio) form.innerHTML+=`<audio controls src="${b.audio}"></audio>`;
   if(b.texto) form.innerHTML+=`<p><em>${b.texto}</em></p>`;
 
-  b.itens.forEach(item=>{
-   n++;
-   form.innerHTML+=`<p>${n}. ${item.pergunta}</p>`;
-   item.opcoes.forEach((op,j)=>{
-    form.innerHTML+=`<label><input type="radio" name="q${n}" value="${j}"> ${op}</label><br>`;
-   });
+  sorteadas.forEach(item=>{
+    contador++;
+    if(b.tipo==="writing"){
+      form.innerHTML+=`
+      <p>${contador}. ${item.enunciado}</p>
+      <div class="bncc">ID: ${item.id}</div>
+      <textarea id="q${contador}"></textarea>`;
+    } else {
+      form.innerHTML+=`<p>${contador}. ${item.pergunta}</p>`;
+      item.opcoes.forEach((op,i)=>{
+        form.innerHTML+=`<label><input type="radio" name="q${contador}" value="${i}"> ${op}</label><br>`;
+      });
+    }
   });
- }
 });
 
-<script>
-document.addEventListener("DOMContentLoaded",()=>{
-  document.getElementById("escola").value = CONFIG.escola;
-});
-
-const EMAIL_PROFESSOR = "teacher.vagnerrocha79@gmail.com";
-const SERIE="6º Ano";
-const BIMESTRE="1º Bimestre";
-
-function normalizar(t){
-  return t.trim().replace(/\s+/g," ");
-}
-
+/**************** CORREÇÃO ****************/
 function finalizar(){
+  let pontos=0;
+  let q=0;
+  let feedback="";
+  let relatorio=`RELATÓRIO DO PROFESSOR – A1\n\n`;
 
-  let pontos = 0;
-  let i = 0;
-
-  let media = {Writing:0, Listening:0, Reading:0, Grammar:0};
-  let feedbackAluno = "";
-  let relatorio = `RELATÓRIO DO PROFESSOR – A1\n\n`;
-
-  blocos.forEach(b=>{
+  prova.forEach(b=>{
     b.itens.forEach(item=>{
-      i++;
+      q++;
+      let resp="", correta="", ok=false;
 
-      let correta = item.resposta || item.opcoes[item.correta];
-      let resp = "";
-
-      if(b.tipo === "writing"){
-        resp = normalizar(document.getElementById(`q${i}`).value);
+      if(b.tipo==="writing"){
+        resp = normalizar(document.getElementById(`q${q}`).value);
+        correta = normalizar(item.resposta);
+        ok = resp===correta;
       } else {
-        const r = document.querySelector(`input[name="q${i}"]:checked`);
-        resp = r ? item.opcoes[r.value] : "Não respondeu";
+        const r=document.querySelector(`input[name="q${q}"]:checked`);
+        resp = r?item.opcoes[r.value]:"Não respondeu";
+        correta = item.opcoes[item.correta];
+        ok = r && Number(r.value)===item.correta;
       }
-
-      const ok = resp === correta;
 
       if(ok){
         pontos++;
-        media[b.hab] += 0.5;
-        feedbackAluno += `<p class="correta">${i}. ✔ Correta</p>`;
+        feedback+=`<p class="correta">${q}. ✔ Correta</p>`;
       } else {
-        feedbackAluno += `
-          <p class="errada">
-            ${i}. ✘ Incorreta<br>
-            <strong>Resposta correta:</strong> ${correta}
-          </p>`;
+        feedback+=`<p class="errada">${q}. ✘ Correta: ${correta}</p>`;
       }
 
-      relatorio += `
+      relatorio+=`
 ID: ${item.id}
 HABILIDADE: ${b.hab}
 BNCC: ${b.bncc}
-QUESTÃO: ${item.pergunta || item.enunciado}
-RESPOSTA DO ALUNO: ${resp}
-RESPOSTA CORRETA: ${correta}
-RESULTADO: ${ok ? "CORRETA" : "INCORRETA"}
------------------------------------
+ALUNO: ${resp}
+CORRETA: ${correta}
+RESULTADO: ${ok?"CORRETA":"INCORRETA"}
+--------------------------
 `;
     });
   });
 
-  const notaFinal = pontos * 0.5;
+  document.getElementById("resultado").innerHTML=`
+  <h3>Resultado do Aluno</h3>
+  <strong>Aluno:</strong> ${nome.value}<br>
+  <strong>Escola:</strong> ${CONFIG.escola}<br>
+  <strong>Nota:</strong> ${(pontos*0.5).toFixed(1)}/10
+  <hr>${feedback}`;
 
-  document.getElementById("resultado").innerHTML = `
-    <h3>Resultado do Aluno</h3>
-
-    <strong>Aluno:</strong> ${nome.value}<br>
-    <strong>Escola:</strong> ${escola.value}<br>
-    <strong>Série:</strong> ${SERIE}<br>
-    <strong>Turma:</strong> ${turma.value}<br><br>
-
-    <strong>Nota final:</strong> ${notaFinal}/10
-
-    <hr>
-    <h4>Correção detalhada</h4>
-    ${feedbackAluno}
-  `;
-
-  window.location.href =
-    `mailto:${EMAIL_PROFESSOR}?subject=Relatório Avaliação – ${SERIE}&body=${encodeURIComponent(relatorio)}`;
+  window.location.href=`mailto:${CONFIG.emailProfessor}?subject=Relatório ${SERIE}&body=${encodeURIComponent(relatorio)}`;
 }
 </script>
 
-
 </body>
 </html>
+
