@@ -5,10 +5,8 @@
 <title>6º Ano – Inglês – 1º Bimestre</title>
 
 <script>
-/**************** CONFIG GLOBAL ****************/
 const CONFIG = {
-  escola: "English Vagner's School",
-  emailProfessor: "teacher.vagnerrocha79@gmail.com"
+  escola: "English Vagner's School"
 };
 </script>
 
@@ -24,18 +22,19 @@ button{padding:12px 18px;font-size:16px;border:none;border-radius:6px;background
 .bncc{font-size:13px;color:#555}
 .correta{color:#2e7d32;font-weight:bold}
 .errada{color:#c62828;font-weight:bold}
+pre{white-space:pre-wrap;background:#f0f0f0;padding:10px;border-radius:6px}
 </style>
 </head>
 
 <body>
 
-<img src="teacher.jpg" width="100%">
 <h1>Avaliação de Língua Inglesa</h1>
 <h3>6º Ano – 1º Bimestre</h3>
 
 <div class="box">
 <label>Escola</label><br>
 <input id="escola" readonly style="width:100%"><br><br>
+
 <div class="linha">
 <input id="nome" class="nome" placeholder="Nome do aluno">
 <input id="numero" class="numero" placeholder="Nº">
@@ -48,15 +47,17 @@ button{padding:12px 18px;font-size:16px;border:none;border-radius:6px;background
 </div>
 
 <form id="quiz" class="box"></form>
-<button type="button" onclick="finalizar()">Enviar e ver resultado</button>
+<button id="btnEnviar" type="button" onclick="finalizar()">Enviar e ver resultado</button>
+
 <div id="resultado" class="box"></div>
+<div id="relatorioProfessor" class="box"></div>
 
 <script>
-/**************** CONSTANTES ****************/
 const SERIE="6º Ano";
 const BIMESTRE="1º Bimestre";
 
-/**************** FUNÇÕES ****************/
+document.getElementById("escola").value = CONFIG.escola;
+
 function normalizar(t){
   return t.trim().replace(/\s+/g," ").toLowerCase();
 }
@@ -65,9 +66,10 @@ function sortear(lista, qtd){
   return [...lista].sort(()=>0.5-Math.random()).slice(0,qtd);
 }
 
-/**************** BANCO DE QUESTÕES ****************/
+/*************** BANCO COMPLETO ***************/
 const blocos = [
 
+/* WRITING */
 {
  hab:"Writing",
  bncc:"EF06LI01",
@@ -81,6 +83,7 @@ const blocos = [
  ]
 },
 
+/* LISTENING */
 {
  hab:"Listening",
  bncc:"EF06LI03",
@@ -95,6 +98,7 @@ const blocos = [
  ]
 },
 
+/* READING */
 {
  hab:"Reading",
  bncc:"EF06LI04",
@@ -109,6 +113,7 @@ const blocos = [
  ]
 },
 
+/* GRAMMAR */
 {
  hab:"Grammar",
  bncc:"EF06LI05",
@@ -124,50 +129,42 @@ const blocos = [
 
 ];
 
-/**************** MONTAGEM COM SORTEIO ****************/
-document.getElementById("escola").value = CONFIG.escola;
+/*************** MONTAGEM ***************/
 const form=document.getElementById("quiz");
-let contador=0;
-let prova=[];
+let prova=[],contador=0;
 
 blocos.forEach(b=>{
-  const sorteadas = sortear(b.itens,5);
-  prova.push({ ...b, itens:sorteadas });
+  const itens=sortear(b.itens,5);
+  prova.push({...b,itens});
 
   form.innerHTML+=`<h3>${b.hab}</h3><div class="bncc">BNCC: ${b.bncc}</div>`;
   if(b.audio) form.innerHTML+=`<audio controls src="${b.audio}"></audio>`;
   if(b.texto) form.innerHTML+=`<p><em>${b.texto}</em></p>`;
 
-  sorteadas.forEach(item=>{
+  itens.forEach(item=>{
     contador++;
     if(b.tipo==="writing"){
       form.innerHTML+=`
       <p>${contador}. ${item.enunciado}</p>
-      <div class="bncc">ID: ${item.id}</div>
       <textarea id="q${contador}"></textarea>`;
     } else {
       form.innerHTML+=`<p>${contador}. ${item.pergunta}</p>`;
       item.opcoes.forEach((op,i)=>{
-        form.innerHTML+=`<label><input type="radio" name="q${contador}" value="${i}"> ${op}</label><br>`;
+        form.innerHTML+=`
+        <label><input type="radio" name="q${contador}" value="${i}"> ${op}</label><br>`;
       });
     }
   });
 });
 
-/**************** CORREÇÃO ****************/
-
+/*************** FINALIZAR ***************/
 function finalizar(){
+  let pontos=0,q=0,feedback="";
+  const nomeAluno=nome.value;
+  const numeroAluno=numero.value;
+  const turmaAluno=turma.value;
 
-  let pontos = 0;
-  let q = 0;
-  let feedbackAluno = "";
-
-  const nomeAluno   = document.getElementById("nome").value;
-  const numeroAluno = document.getElementById("numero").value;
-  const turmaAluno  = document.getElementById("turma").value;
-
-  let relatorio = `
-RELATÓRIO DO PROFESSOR – A1 (AVALIAÇÃO CONCEITUAL)
+  let relatorio=`RELATÓRIO DO PROFESSOR – A1
 
 ESCOLA: ${CONFIG.escola}
 ALUNO: ${nomeAluno}
@@ -175,78 +172,55 @@ Nº: ${numeroAluno}
 SÉRIE: ${SERIE}
 TURMA: ${turmaAluno}
 BIMESTRE: ${BIMESTRE}
-DATA: ${new Date().toLocaleDateString("pt-BR")}
 
-===================================
+-------------------------
 `;
 
   prova.forEach(b=>{
     b.itens.forEach(item=>{
       q++;
-
-      let respostaAluno = "";
-      let correta = "";
-      let ok = false;
+      let resp="",correta="",ok=false;
 
       if(b.tipo==="writing"){
-        respostaAluno = normalizar(document.getElementById(`q${q}`).value);
-        correta = normalizar(item.resposta);
-        ok = respostaAluno === correta;
+        resp=normalizar(document.getElementById(`q${q}`).value);
+        correta=normalizar(item.resposta);
+        ok=resp===correta;
       } else {
-        const r = document.querySelector(`input[name="q${q}"]:checked`);
-        respostaAluno = r ? item.opcoes[r.value] : "Não respondeu";
-        correta = item.opcoes[item.correta];
-        ok = r && Number(r.value) === item.correta;
+        const r=document.querySelector(`input[name="q${q}"]:checked`);
+        resp=r?item.opcoes[r.value]:"Não respondeu";
+        correta=item.opcoes[item.correta];
+        ok=r && Number(r.value)===item.correta;
       }
 
-      if(ok){
-        pontos++;
-        feedbackAluno += `<p class="correta">${q}. ✔ Correta</p>`;
-      } else {
-        feedbackAluno += `<p class="errada">${q}. ✘ Correta: ${correta}</p>`;
-      }
+      if(ok){pontos++;feedback+=`<p class="correta">${q}. ✔ Correta</p>`;}
+      else{feedback+=`<p class="errada">${q}. ✘ Correta: ${correta}</p>`;}
 
-      relatorio += `
+      relatorio+=`
 ID: ${item.id}
 HABILIDADE: ${b.hab}
-BNCC: ${b.bncc}
-QUESTÃO: ${item.pergunta || item.enunciado}
-RESPOSTA DO ALUNO: ${respostaAluno}
-RESPOSTA CORRETA: ${correta}
-RESULTADO: ${ok ? "CORRETA" : "INCORRETA"}
------------------------------------
-`;
+RESPOSTA DO ALUNO: ${resp}
+CORRETA: ${correta}
+RESULTADO: ${ok?"CORRETA":"INCORRETA"}
+-------------------------`;
     });
   });
 
-  document.getElementById("resultado").innerHTML = `
+  document.getElementById("resultado").innerHTML=`
 <h3>Resultado do Aluno</h3>
+Aluno: ${nomeAluno}<br>
+Nº: ${numeroAluno}<br>
+Série: ${SERIE}<br>
+Turma: ${turmaAluno}<br>
+Nota: ${(pontos*0.5).toFixed(1)}/10
+<hr>${feedback}`;
 
-<strong>Aluno:</strong> ${nomeAluno}<br>
-<strong>Nº:</strong> ${numeroAluno}<br>
-<strong>Série:</strong> ${SERIE}<br>
-<strong>Turma:</strong> ${turmaAluno}<br>
-<strong>Escola:</strong> ${CONFIG.escola}<br>
-<strong>Bimestre:</strong> ${BIMESTRE}<br><br>
+  document.getElementById("relatorioProfessor").innerHTML=`
+<h3>Relatório do Professor (copiar)</h3>
+<pre>${relatorio}</pre>`;
 
-<strong>Nota Final:</strong> ${(pontos * 0.5).toFixed(1)}/10
-
-<hr>
-<h4>Correção detalhada</h4>
-${feedbackAluno}
-`;
-
-  window.location.href =
-    `mailto:${CONFIG.emailProfessor}?subject=Relatório ${SERIE}&body=${encodeURIComponent(relatorio)}`;
-
-  /******** BLOQUEIO PÓS-ENVIO ********/
   document.querySelectorAll("input, textarea, select, button")
-    .forEach(el => el.disabled = true);
+    .forEach(el=>el.disabled=true);
 }
-
-
-
-
 </script>
 
 </body>
