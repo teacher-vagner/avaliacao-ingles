@@ -79,6 +79,7 @@ button{
 <div id="resultado" class="box"></div>
 
 <script>
+ const EMAIL_PROFESSOR = "teacher.vagnerrocha79@gmail.com";
  document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("escola").value = CONFIG.escola;
 });
@@ -109,7 +110,7 @@ const blocos = [
  hab:"Listening",
  bncc:"EF06LI03",
  tipo:"listening",
- audio:"audio2.mp3",
+ audio:"midia/audios/audio2.mp3",
  itens:[
   ["Where did Kate go?",["Paris","London","Rome","Berlin"],0],
   ["Who did she go with?",["mother","sister","friend","father"],1],
@@ -232,12 +233,27 @@ function finalizar(){
  Reading: ${media.Reading}<br>
  Grammar: ${media.Grammar}<hr>${fb}`;
  
- window.location.href =
-  `mailto:${CONFIG.emailProfessor}?subject=Avaliação Inglês 6º Ano&body=${encodeURIComponent(corpoEmail)}`;
+ const corpoEmail = `
+ESCOLA: ${ESCOLA}
+ALUNO: ${nome.value}
+SÉRIE: ${SERIE}
+BIMESTRE: ${BIMESTRE}
+
+NOTA FINAL: ${pontos*0.5}/10
+
+MÉDIA POR HABILIDADE
+Writing: ${media.Writing}
+Listening: ${media.Listening}
+Reading: ${media.Reading}
+Grammar: ${media.Grammar}
+`;
+
+window.location.href =
+  `mailto:${EMAIL_PROFESSOR}?subject=Avaliação Inglês 6º Ano&body=${encodeURIComponent(corpoEmail)}`;
+
 
 }
 </script>
 
 </body>
 </html>
-
