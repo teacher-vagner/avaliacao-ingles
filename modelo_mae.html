@@ -85,7 +85,7 @@ const blocos = [
  hab:"Listening",
  bncc:"EF06LI03",
  tipo:"listening",
- audio:"audio2.mp3",
+ audio:"midia/audios/audio2.mp3",
  itens:[
   {id:"L01",pergunta:"Where did Kate go?",opcoes:["Paris","London","Rome","Berlin"],correta:0},
   {id:"L02",pergunta:"Who did she go with?",opcoes:["mother","sister","friend","father"],correta:1},
@@ -155,18 +155,25 @@ blocos.forEach(b=>{
 });
 
 /**************** CORREÇÃO ****************/
+
 function finalizar(){
-  let pontos=0;
-  let q=0;
-  let feedback="";
- let relatorio = `
+
+  let pontos = 0;
+  let q = 0;
+  let feedbackAluno = "";
+
+  const nomeAluno   = document.getElementById("nome").value;
+  const numeroAluno = document.getElementById("numero").value;
+  const turmaAluno  = document.getElementById("turma").value;
+
+  let relatorio = `
 RELATÓRIO DO PROFESSOR – A1 (AVALIAÇÃO CONCEITUAL)
 
 ESCOLA: ${CONFIG.escola}
-ALUNO: ${nome.value}
-Nº: ${numero.value}
+ALUNO: ${nomeAluno}
+Nº: ${numeroAluno}
 SÉRIE: ${SERIE}
-TURMA: ${turma.value}
+TURMA: ${turmaAluno}
 BIMESTRE: ${BIMESTRE}
 DATA: ${new Date().toLocaleDateString("pt-BR")}
 
@@ -176,32 +183,35 @@ DATA: ${new Date().toLocaleDateString("pt-BR")}
   prova.forEach(b=>{
     b.itens.forEach(item=>{
       q++;
-      let resp="", correta="", ok=false;
+
+      let respostaAluno = "";
+      let correta = "";
+      let ok = false;
 
       if(b.tipo==="writing"){
-        resp = normalizar(document.getElementById(`q${q}`).value);
+        respostaAluno = normalizar(document.getElementById(`q${q}`).value);
         correta = normalizar(item.resposta);
-        ok = resp===correta;
+        ok = respostaAluno === correta;
       } else {
-        const r=document.querySelector(`input[name="q${q}"]:checked`);
-        resp = r?item.opcoes[r.value]:"Não respondeu";
+        const r = document.querySelector(`input[name="q${q}"]:checked`);
+        respostaAluno = r ? item.opcoes[r.value] : "Não respondeu";
         correta = item.opcoes[item.correta];
-        ok = r && Number(r.value)===item.correta;
+        ok = r && Number(r.value) === item.correta;
       }
 
       if(ok){
         pontos++;
-        feedback+=`<p class="correta">${q}. ✔ Correta</p>`;
+        feedbackAluno += `<p class="correta">${q}. ✔ Correta</p>`;
       } else {
-        feedback+=`<p class="errada">${q}. ✘ Correta: ${correta}</p>`;
+        feedbackAluno += `<p class="errada">${q}. ✘ Correta: ${correta}</p>`;
       }
 
-     relatorio += `
+      relatorio += `
 ID: ${item.id}
 HABILIDADE: ${b.hab}
 BNCC: ${b.bncc}
 QUESTÃO: ${item.pergunta || item.enunciado}
-RESPOSTA DO ALUNO: ${respostaAluno || "Não respondeu"}
+RESPOSTA DO ALUNO: ${respostaAluno}
 RESPOSTA CORRETA: ${correta}
 RESULTADO: ${ok ? "CORRETA" : "INCORRETA"}
 -----------------------------------
@@ -209,15 +219,16 @@ RESULTADO: ${ok ? "CORRETA" : "INCORRETA"}
     });
   });
 
- document.getElementById("resultado").innerHTML = `
+  document.getElementById("resultado").innerHTML = `
 <h3>Resultado do Aluno</h3>
 
-<strong>Aluno:</strong> ${nome.value}<br>
-<strong>Nº:</strong> ${numero.value}<br>
+<strong>Aluno:</strong> ${nomeAluno}<br>
+<strong>Nº:</strong> ${numeroAluno}<br>
 <strong>Série:</strong> ${SERIE}<br>
-<strong>Turma:</strong> ${turma.value}<br>
+<strong>Turma:</strong> ${turmaAluno}<br>
 <strong>Escola:</strong> ${CONFIG.escola}<br>
 <strong>Bimestre:</strong> ${BIMESTRE}<br><br>
+
 <strong>Nota Final:</strong> ${(pontos * 0.5).toFixed(1)}/10
 
 <hr>
@@ -225,13 +236,14 @@ RESULTADO: ${ok ? "CORRETA" : "INCORRETA"}
 ${feedbackAluno}
 `;
 
-  window.location.href=`mailto:${CONFIG.emailProfessor}?subject=Relatório ${SERIE}&body=${encodeURIComponent(relatorio)}`;
-  
+  window.location.href =
+    `mailto:${CONFIG.emailProfessor}?subject=Relatório ${SERIE}&body=${encodeURIComponent(relatorio)}`;
+
   /******** BLOQUEIO PÓS-ENVIO ********/
-document.querySelectorAll("input, textarea, select, button")
-  .forEach(el => el.disabled = true);
-  
+  document.querySelectorAll("input, textarea, select, button")
+    .forEach(el => el.disabled = true);
 }
+
 
 
 
