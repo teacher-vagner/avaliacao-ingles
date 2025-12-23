@@ -79,14 +79,20 @@ button{
 <div id="resultado" class="box"></div>
 
 <script>
- const EMAIL_PROFESSOR = "teacher.vagnerrocha79@gmail.com";
+const EMAIL_PROFESSOR = "teacher.vagnerrocha79@gmail.com";
+
  document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("escola").value = CONFIG.escola;
 });
- 
+
 /******** CONFIG ********/
 const SERIE="6º Ano";
 const BIMESTRE="1º Bimestre";
+
+/******** FUNÇÕES ********/
+function normalizar(t){
+  return t.trim().replace(/\s+/g," ");
+}
 
 /******** BANCO ********/
 const blocos = [
@@ -199,61 +205,87 @@ blocos.forEach(b=>{
 });
 
 /******** CORREÇÃO ********/
-function normalizar(t){return t.trim().replace(/\s+/g," ");}
-
 function finalizar(){
- let pontos=0,total=n,fb="",i=0;
+ let pontos=0,total=n;
+ let feedbackHtml="";
+ let respostasTexto="";
+ let i=0;
+
  let media={Writing:0,Listening:0,Reading:0,Grammar:0};
 
  blocos.forEach(b=>{
   if(b.tipo==="writing"){
     b.itens.forEach(i2=>{
       i++;
-      if(normalizar(document.getElementById(`q${i}`).value)===i2[1]){
-        pontos++;media.Writing+=0.5;fb+=`<p class="correta">${i} ✔</p>`;
-      } else fb+=`<p class="errada">${i} ✘</p>`;
+      const resp = normalizar(document.getElementById(`q${i}`).value);
+      respostasTexto += `${i}. ${resp}\n`;
+
+      if(resp===i2[1]){
+        pontos++; media.Writing+=0.5;
+        feedbackHtml+=`<p class="correta">${i} ✔</p>`;
+      } else {
+        feedbackHtml+=`<p class="errada">${i} ✘ | Correta: ${i2[1]}</p>`;
+      }
     });
   } else {
     b.itens.forEach(i2=>{
       i++;
       const r=document.querySelector(`input[name="q${i}"]:checked`);
-      if(r&&Number(r.value)===i2[2]){
-        pontos++;media[b.hab]+=0.5;fb+=`<p class="correta">${i} ✔</p>`;
-      } else fb+=`<p class="errada">${i} ✘</p>`;
+      const marcada = r ? i2[1][r.value] : "Não respondeu";
+      respostasTexto += `${i}. ${marcada}\n`;
+
+      if(r && Number(r.value)===i2[2]){
+        pontos++; media[b.hab]+=0.5;
+        feedbackHtml+=`<p class="correta">${i} ✔</p>`;
+      } else {
+        feedbackHtml+=`<p class="errada">${i} ✘ | Correta: ${i2[1][i2[2]]}</p>`;
+      }
     });
   }
  });
 
+ const notaFinal = pontos*0.5;
+
  document.getElementById("resultado").innerHTML=`
  <strong>${nome.value}</strong><br>
  Escola: ${escola.value}<br>
- Nota Final: ${pontos*0.5}/10<br><br>
+ Série: ${SERIE}<br>
+ Turma: ${turma.value}<br>
+ <strong>Nota Final:</strong> ${notaFinal}/10<br><br>
+
+ <strong>Média por habilidade</strong><br>
  Writing: ${media.Writing}<br>
  Listening: ${media.Listening}<br>
  Reading: ${media.Reading}<br>
- Grammar: ${media.Grammar}<hr>${fb}`;
- 
- const corpoEmail = `
-ESCOLA: ${ESCOLA}
+ Grammar: ${media.Grammar}
+ <hr>
+ ${feedbackHtml}
+ `;
+
+ const corpoEmail =
+`ESCOLA: ${escola.value}
 ALUNO: ${nome.value}
 SÉRIE: ${SERIE}
 BIMESTRE: ${BIMESTRE}
+TURMA: ${turma.value}
 
-NOTA FINAL: ${pontos*0.5}/10
+NOTA FINAL: ${notaFinal}/10
 
 MÉDIA POR HABILIDADE
 Writing: ${media.Writing}
 Listening: ${media.Listening}
 Reading: ${media.Reading}
 Grammar: ${media.Grammar}
+
+RESPOSTAS DO ALUNO
+${respostasTexto}
 `;
 
-window.location.href =
-  `mailto:${EMAIL_PROFESSOR}?subject=Avaliação Inglês 6º Ano&body=${encodeURIComponent(corpoEmail)}`;
-
-
+ window.location.href =
+  `mailto:${EMAIL_PROFESSOR}?subject=Avaliação Inglês – ${SERIE}&body=${encodeURIComponent(corpoEmail)}`;
 }
 </script>
+
 
 </body>
 </html>
