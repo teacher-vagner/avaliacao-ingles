@@ -1,292 +1,193 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
- <script src="config.js"></script>
-
+<script src="config.js"></script>
 <meta charset="UTF-8">
 <title>6º Ano – Inglês – 1º Bimestre</title>
 
 <style>
-body{
-  font-family:Arial, sans-serif;
-  max-width:900px;
-  margin:auto;
-  background:#f4f6fb;
-  padding:20px;
-}
+body{font-family:Arial;max-width:900px;margin:auto;background:#f4f6fb;padding:20px}
 h1,h2,h3{color:#1f4fd8}
-.box{
-  background:#fff;
-  border-radius:8px;
-  padding:15px;
-  margin-bottom:20px;
-  
-  }
+.box{background:#fff;border-radius:8px;padding:15px;margin-bottom:20px}
 .linha{display:flex;gap:10px}
 .linha input,.linha select{padding:6px}
-.nome{width:70%}
-.numero{width:10%}
-.turma{width:20%}
-textarea{width:100%;height:70px}
-button{
-  padding:12px 18px;
-  font-size:16px;
-  border:none;
-  border-radius:6px;
-  background:#1f4fd8;
-  color:#fff;
-  cursor:pointer;
-  
-}
+.nome{width:70%}.numero{width:10%}.turma{width:20%}
 textarea{width:100%;height:60px;margin-bottom:8px}
+button{padding:12px 18px;font-size:16px;border:none;border-radius:6px;background:#1f4fd8;color:#fff;cursor:pointer}
 .bncc{font-size:13px;color:#555}
 .correta{color:#2e7d32;font-weight:bold}
 .errada{color:#c62828;font-weight:bold}
-button{
-  padding:12px 18px;
-  font-size:16px;
-  border:none;
-  border-radius:6px;
-  background:#1f4fd8;
-  color:#fff;
-  cursor:pointer;
-}
 </style>
 </head>
 
 <body>
+
 <img src="teacher.jpg" width="100%">
 <h1>Avaliação de Língua Inglesa</h1>
 <h3>6º Ano – 1º Bimestre</h3>
- 
+
 <div class="box">
-  <label>Escola</label><br>
-  <input id="escola" readonly style="width:100%"><br><br>
-  <div class="linha">
-    <input id="nome" class="nome" placeholder="Nome do aluno">
-    <input id="numero" class="numero" placeholder="Nº">
-    <select id="turma" class="turma">
-      <option value="">Turma</option>
-      <option>A</option><option>B</option><option>C</option>
-    </select>
-  </div>
+<label>Escola</label><br>
+<input id="escola" readonly style="width:100%"><br><br>
+<div class="linha">
+<input id="nome" class="nome" placeholder="Nome do aluno">
+<input id="numero" class="numero" placeholder="Nº">
+<select id="turma" class="turma">
+<option value="">Turma</option>
+<option>A</option><option>B</option><option>C</option>
+</select>
+</div>
 </div>
 
 <form id="quiz" class="box"></form>
-
 <button onclick="finalizar()">Enviar e ver resultado</button>
-
 <div id="resultado" class="box"></div>
 
 <script>
-const EMAIL_PROFESSOR = "teacher.vagnerrocha79@gmail.com";
-
- document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("escola").value = CONFIG.escola;
+document.addEventListener("DOMContentLoaded",()=>{
+ document.getElementById("escola").value = CONFIG.escola;
 });
 
-/******** CONFIG ********/
+const EMAIL_PROFESSOR = "teacher.vagnerrocha79@gmail.com";
 const SERIE="6º Ano";
 const BIMESTRE="1º Bimestre";
 
-/******** FUNÇÕES ********/
-function normalizar(t){
-  return t.trim().replace(/\s+/g," ");
-}
+function normalizar(t){return t.trim().replace(/\s+/g," ");}
 
-/******** BANCO ********/
 const blocos = [
 
-/* ===== WRITING ===== */
 {
  hab:"Writing",
  bncc:"EF06LI01",
  tipo:"writing",
  itens:[
-  ["We / did / our / homework / after / school","We did our homework after school."],
-  ["Did / you / go / to / school / yesterday","Did you go to school yesterday?"],
-  ["They / played / soccer / yesterday","They played soccer yesterday."],
-  ["She / studied / English / last / night","She studied English last night."],
-  ["We / visited / our / grandparents","We visited our grandparents."]
+  {id:"W01",enunciado:"our / did / We / school / homework / after",resposta:"We did our homework after school."},
+  {id:"W02",enunciado:"go / yesterday / Did / to / school / you",resposta:"Did you go to school yesterday?"},
+  {id:"W03",enunciado:"played / yesterday / soccer / They",resposta:"They played soccer yesterday."},
+  {id:"W04",enunciado:"last / studied / English / She / night",resposta:"She studied English last night."},
+  {id:"W05",enunciado:"grandparents / visited / our / We",resposta:"We visited our grandparents."}
  ]
 },
 
-/* ===== LISTENING ===== */
 {
  hab:"Listening",
  bncc:"EF06LI03",
  tipo:"listening",
- audio:"audio2.mp3",
+ audio:"midia/audios/audio2.mp3",
  itens:[
-  ["Where did Kate go?",["Paris","London","Rome","Berlin"],0],
-  ["Who did she go with?",["mother","sister","friend","father"],1],
-  ["How did she travel?",["car","plane","train","bus"],1],
-  ["How long did she stay?",["5 days","1 week","1 month","2 days"],0],
-  ["Did she like the trip?",["Yes","No","Maybe","Not mentioned"],0]
+  {id:"L01",pergunta:"Where did Kate go?",opcoes:["Paris","London","Rome","Berlin"],correta:0},
+  {id:"L02",pergunta:"Who did she go with?",opcoes:["mother","sister","friend","father"],correta:1},
+  {id:"L03",pergunta:"How did she travel?",opcoes:["car","plane","train","bus"],correta:1},
+  {id:"L04",pergunta:"How long did she stay?",opcoes:["5 days","1 week","1 month","2 days"],correta:0},
+  {id:"L05",pergunta:"Did she like the trip?",opcoes:["Yes","No","Maybe","Not mentioned"],correta:0}
  ]
 },
 
-/* ===== READING ===== */
 {
  hab:"Reading",
  bncc:"EF06LI04",
  tipo:"reading",
  texto:"Kate went to Paris last year with her sister. They stayed there for five days.",
  itens:[
-  ["Where did Kate go?",["Paris","London","Rome","Berlin"],0],
-  ["Who went with her?",["mother","sister","friend","father"],1],
-  ["How long did they stay?",["5 days","1 week","1 month","2 days"],0],
-  ["When did she go?",["last year","last month","yesterday","today"],0],
-  ["Did Kate travel alone?",["Yes","No","Not mentioned","Maybe"],1]
+  {id:"R01",pergunta:"Where did Kate go?",opcoes:["Paris","London","Rome","Berlin"],correta:0},
+  {id:"R02",pergunta:"Who went with her?",opcoes:["mother","sister","friend","father"],correta:1},
+  {id:"R03",pergunta:"How long did they stay?",opcoes:["5 days","1 week","1 month","2 days"],correta:0},
+  {id:"R04",pergunta:"When did she go?",opcoes:["last year","last month","yesterday","today"],correta:0},
+  {id:"R05",pergunta:"Did Kate travel alone?",opcoes:["Yes","No","Not mentioned","Maybe"],correta:1}
  ]
 },
 
-/* ===== GRAMMAR ===== */
 {
  hab:"Grammar",
  bncc:"EF06LI05",
  tipo:"grammar",
  itens:[
-  ["She ___ my friend.",["am","is","are","be"],1],
-  ["They ___ students.",["am","is","are","be"],2],
-  ["I ___ a student.",["am","is","are","be"],0],
-  ["He ___ 12 years old.",["am","is","are","be"],1],
-  ["We ___ happy.",["am","is","are","be"],2]
+  {id:"G01",pergunta:"She ___ my friend.",opcoes:["am","is","are","be"],correta:1},
+  {id:"G02",pergunta:"They ___ students.",opcoes:["am","is","are","be"],correta:2},
+  {id:"G03",pergunta:"I ___ a student.",opcoes:["am","is","are","be"],correta:0},
+  {id:"G04",pergunta:"He ___ 12 years old.",opcoes:["am","is","are","be"],correta:1},
+  {id:"G05",pergunta:"We ___ happy.",opcoes:["am","is","are","be"],correta:2}
  ]
 }
 
 ];
 
-/******** MONTAGEM ********/
 const form=document.getElementById("quiz");
 let n=0;
 
 blocos.forEach(b=>{
-  form.innerHTML+=`<h3>${b.hab}</h3><div class="bncc">BNCC: ${b.bncc}</div>`;
+ form.innerHTML+=`<h3>${b.hab}</h3><div class="bncc">BNCC: ${b.bncc}</div>`;
 
-  if(b.tipo==="writing"){
-    b.itens.forEach(i=>{
-      n++;
-      form.innerHTML+=`<p>${n}. Reorder: ${i[0]}</p><textarea id="q${n}"></textarea>`;
-    });
-  }
+ if(b.tipo==="writing"){
+  b.itens.forEach(item=>{
+   n++;
+   form.innerHTML+=`<p>${n}. Reorder: ${item.enunciado}</p>
+   <div class="bncc">ID: ${item.id}</div>
+   <textarea id="q${n}"></textarea>`;
+  });
+ }
 
-  if(b.tipo==="listening"){
-    form.innerHTML+=`<audio controls src="${b.audio}"></audio>`;
-    b.itens.forEach(i=>{
-      n++;
-      form.innerHTML+=`<p>${n}. ${i[0]}</p>`;
-      i[1].forEach((a,j)=>{
-        form.innerHTML+=`<label><input type="radio" name="q${n}" value="${j}"> ${a}</label><br>`;
-      });
-    });
-  }
+ else{
+  if(b.audio) form.innerHTML+=`<audio controls src="${b.audio}"></audio>`;
+  if(b.texto) form.innerHTML+=`<p><em>${b.texto}</em></p>`;
 
-  if(b.tipo==="reading"){
-    form.innerHTML+=`<p><em>${b.texto}</em></p>`;
-    b.itens.forEach(i=>{
-      n++;
-      form.innerHTML+=`<p>${n}. ${i[0]}</p>`;
-      i[1].forEach((a,j)=>{
-        form.innerHTML+=`<label><input type="radio" name="q${n}" value="${j}"> ${a}</label><br>`;
-      });
-    });
-  }
-
-  if(b.tipo==="grammar"){
-    b.itens.forEach(i=>{
-      n++;
-      form.innerHTML+=`<p>${n}. ${i[0]}</p>`;
-      i[1].forEach((a,j)=>{
-        form.innerHTML+=`<label><input type="radio" name="q${n}" value="${j}"> ${a}</label><br>`;
-      });
-    });
-  }
+  b.itens.forEach(item=>{
+   n++;
+   form.innerHTML+=`<p>${n}. ${item.pergunta}</p>`;
+   item.opcoes.forEach((op,j)=>{
+    form.innerHTML+=`<label><input type="radio" name="q${n}" value="${j}"> ${op}</label><br>`;
+   });
+  });
+ }
 });
 
-/******** CORREÇÃO ********/
 function finalizar(){
- let pontos=0,total=n;
- let feedbackHtml="";
- let respostasTexto="";
- let i=0;
-
+ let pontos=0,i=0;
  let media={Writing:0,Listening:0,Reading:0,Grammar:0};
+ let relatorio=`RELATÓRIO DO PROFESSOR\n\n`;
+ let feedbackAluno = "";
 
  blocos.forEach(b=>{
-  if(b.tipo==="writing"){
-    b.itens.forEach(i2=>{
-      i++;
-      const resp = normalizar(document.getElementById(`q${i}`).value);
-      respostasTexto += `${i}. ${resp}\n`;
+  b.itens.forEach(item=>{
+   i++;
+   let correta=item.resposta || item.opcoes[item.correta];
+   let r=document.querySelector(`input[name="q${i}"]:checked`);
+   let resp=b.tipo==="writing"
+     ? normalizar(document.getElementById(`q${i}`).value)
+     : r?item.opcoes[r.value]:"Não respondeu";
 
-      if(resp===i2[1]){
-        pontos++; media.Writing+=0.5;
-        feedbackHtml+=`<p class="correta">${i} ✔</p>`;
-      } else {
-        feedbackHtml+=`<p class="errada">${i} ✘ | Correta: ${i2[1]}</p>`;
-      }
-    });
-  } else {
-    b.itens.forEach(i2=>{
-      i++;
-      const r=document.querySelector(`input[name="q${i}"]:checked`);
-      const marcada = r ? i2[1][r.value] : "Não respondeu";
-      respostasTexto += `${i}. ${marcada}\n`;
+   let ok = resp === correta;
 
-      if(r && Number(r.value)===i2[2]){
-        pontos++; media[b.hab]+=0.5;
-        feedbackHtml+=`<p class="correta">${i} ✔</p>`;
-      } else {
-        feedbackHtml+=`<p class="errada">${i} ✘ | Correta: ${i2[1][i2[2]]}</p>`;
-      }
-    });
-  }
+if(ok){
+  pontos++;
+  media[b.hab] += 0.5;
+  feedbackAluno += `<p class="correta">${i}. ✔ Correta</p>`;
+} else {
+  feedbackAluno += `<p class="errada">${i}. ✘ Incorreta<br>
+  <strong>Resposta correta:</strong> ${correta}</p>`;
+}
+
+   relatorio+=`ID:${item.id}\n${item.pergunta||item.enunciado}\nAluno:${resp}\nCorreta:${correta}\n\n`;
+  });
  });
 
- const notaFinal = pontos*0.5;
+ ddocument.getElementById("resultado").innerHTML = `
+<h3>Resultado do Aluno</h3>
 
- document.getElementById("resultado").innerHTML=`
- <strong>${nome.value}</strong><br>
- Escola: ${escola.value}<br>
- Série: ${SERIE}<br>
- Turma: ${turma.value}<br>
- <strong>Nota Final:</strong> ${notaFinal}/10<br><br>
+<strong>Aluno:</strong> ${nome.value}<br>
+<strong>Escola:</strong> ${escola.value}<br>
+<strong>Série:</strong> ${SERIE}<br>
+<strong>Turma:</strong> ${turma.value}<br><br>
 
- <strong>Média por habilidade</strong><br>
- Writing: ${media.Writing}<br>
- Listening: ${media.Listening}<br>
- Reading: ${media.Reading}<br>
- Grammar: ${media.Grammar}
- <hr>
- ${feedbackHtml}
- `;
+<strong>Nota final:</strong> ${pontos*0.5}/10
 
- const corpoEmail =
-`ESCOLA: ${escola.value}
-ALUNO: ${nome.value}
-SÉRIE: ${SERIE}
-BIMESTRE: ${BIMESTRE}
-TURMA: ${turma.value}
-
-NOTA FINAL: ${notaFinal}/10
-
-MÉDIA POR HABILIDADE
-Writing: ${media.Writing}
-Listening: ${media.Listening}
-Reading: ${media.Reading}
-Grammar: ${media.Grammar}
-
-RESPOSTAS DO ALUNO
-${respostasTexto}
+<hr>
+<h4>Correção detalhada</h4>
+${feedbackAluno}
 `;
-
- window.location.href =
-  `mailto:${EMAIL_PROFESSOR}?subject=Avaliação Inglês – ${SERIE}&body=${encodeURIComponent(corpoEmail)}`;
+ window.location.href=`mailto:${EMAIL_PROFESSOR}?subject=Relatório ${SERIE}&body=${encodeURIComponent(relatorio)}`;
 }
 </script>
 
-
 </body>
 </html>
-
