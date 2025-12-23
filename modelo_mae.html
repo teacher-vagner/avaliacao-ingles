@@ -6,8 +6,8 @@
 
 <style>
 body{
-  font-family: Arial, sans-serif;
-  max-width: 900px;
+  font-family:Arial, sans-serif;
+  max-width:900px;
   margin:auto;
   background:#f4f6fb;
   padding:20px;
@@ -18,7 +18,8 @@ h1,h2,h3{color:#1f4fd8}
   border-radius:8px;
   padding:15px;
   margin-bottom:20px;
-}
+  
+  }
 .linha{display:flex;gap:10px}
 .linha input,.linha select{padding:6px}
 .nome{width:70%}
@@ -33,10 +34,21 @@ button{
   background:#1f4fd8;
   color:#fff;
   cursor:pointer;
+  
 }
+textarea{width:100%;height:60px;margin-bottom:8px}
 .bncc{font-size:13px;color:#555}
 .correta{color:#2e7d32;font-weight:bold}
 .errada{color:#c62828;font-weight:bold}
+button{
+  padding:12px 18px;
+  font-size:16px;
+  border:none;
+  border-radius:6px;
+  background:#1f4fd8;
+  color:#fff;
+  cursor:pointer;
+}
 </style>
 </head>
 
@@ -44,7 +56,7 @@ button{
 <img src="teacher.jpg" width="100%">
 <h1>Avaliação de Língua Inglesa</h1>
 <h3>6º Ano – 1º Bimestre</h3>
-
+ 
 <div class="box">
   <label>Escola</label><br>
   <input id="escola" style="width:100%" placeholder="Nome da escola"><br><br>
@@ -68,119 +80,153 @@ button{
 /******** CONFIG ********/
 const SERIE="6º Ano";
 const BIMESTRE="1º Bimestre";
-const EMAIL_PROFESSOR="teacher.vagnerrocha79@gmail.com";
 
 /******** BANCO ********/
-const banco = [
+const blocos = [
 
-/* ===== WRITING (5) ===== */
-{hab:"Writing",bncc:"EF06LI01",tipo:"aberta",q:"Reorder: We / homework / did / after / school",r:"We did our homework after school."},
-{hab:"Writing",bncc:"EF06LI01",tipo:"aberta",q:"Reorder: Did / you / go / to / school / yesterday",r:"Did you go to school yesterday?"},
-{hab:"Writing",bncc:"EF06LI01",tipo:"aberta",q:"Reorder: They / played / soccer / yesterday",r:"They played soccer yesterday."},
-{hab:"Writing",bncc:"EF06LI01",tipo:"aberta",q:"Reorder: She / studied / English / last night",r:"She studied English last night."},
-{hab:"Writing",bncc:"EF06LI01",tipo:"aberta",q:"Reorder: We / visited / our / grandparents",r:"We visited our grandparents."},
-
-/* ===== LISTENING (1 áudio + 5) ===== */
+/* ===== WRITING ===== */
 {
-hab:"Listening",bncc:"EF06LI03",tipo:"listening",
-audio:"audio2.mp3",
-perg:[
-{q:"Where did Kate go?",a:["Paris","London","Rome","Berlin"],c:0},
-{q:"Who did she go with?",a:["mother","sister","friend","father"],c:1},
-{q:"How did she travel?",a:["car","plane","train","bus"],c:1},
-{q:"How long did she stay?",a:["5 days","1 week","1 month","2 days"],c:0},
-{q:"Did she like the trip?",a:["Yes","No","Maybe","Not mentioned"],c:0}
-]
+ hab:"Writing",
+ bncc:"EF06LI01",
+ tipo:"writing",
+ itens:[
+  ["We / did / our / homework / after / school","We did our homework after school."],
+  ["Did / you / go / to / school / yesterday","Did you go to school yesterday?"],
+  ["They / played / soccer / yesterday","They played soccer yesterday."],
+  ["She / studied / English / last / night","She studied English last night."],
+  ["We / visited / our / grandparents","We visited our grandparents."]
+ ]
 },
 
-/* ===== READING (1 texto + 5) ===== */
+/* ===== LISTENING ===== */
 {
-hab:"Reading",bncc:"EF06LI04",tipo:"reading",
-texto:"Tom is 11 years old. He lives in Brazil and studies English at school.",
-perg:[
-{q:"How old is Tom?",a:["10","11","12","13"],c:1},
-{q:"Where does Tom live?",a:["USA","England","Brazil","Canada"],c:2},
-{q:"What does he study?",a:["Math","Science","English","History"],c:2},
-{q:"Does he study at school?",a:["Yes","No","Sometimes","Never"],c:0},
-{q:"Is Tom a student?",a:["Yes","No","Not mentioned","Maybe"],c:0}
-]
+ hab:"Listening",
+ bncc:"EF06LI03",
+ tipo:"listening",
+ audio:"midia/audios/audio2.mp3",
+ itens:[
+  ["Where did Kate go?",["Paris","London","Rome","Berlin"],0],
+  ["Who did she go with?",["mother","sister","friend","father"],1],
+  ["How did she travel?",["car","plane","train","bus"],1],
+  ["How long did she stay?",["5 days","1 week","1 month","2 days"],0],
+  ["Did she like the trip?",["Yes","No","Maybe","Not mentioned"],0]
+ ]
 },
 
-/* ===== GRAMMAR (5) ===== */
-{hab:"Grammar",bncc:"EF06LI05",tipo:"obj",q:"I ___ a student.",a:["am","is","are","be"],c:0},
-{hab:"Grammar",bncc:"EF06LI05",tipo:"obj",q:"She ___ my friend.",a:["am","is","are","be"],c:1},
-{hab:"Grammar",bncc:"EF06LI05",tipo:"obj",q:"They ___ happy.",a:["am","is","are","be"],c:2},
-{hab:"Grammar",bncc:"EF06LI05",tipo:"obj",q:"We ___ English.",a:["study","studies","studying","studied"],c:0},
-{hab:"Grammar",bncc:"EF06LI05",tipo:"obj",q:"He ___ soccer.",a:["play","plays","played","playing"],c:1}
+/* ===== READING ===== */
+{
+ hab:"Reading",
+ bncc:"EF06LI04",
+ tipo:"reading",
+ texto:"Kate went to Paris last year with her sister. They stayed there for five days.",
+ itens:[
+  ["Where did Kate go?",["Paris","London","Rome","Berlin"],0],
+  ["Who went with her?",["mother","sister","friend","father"],1],
+  ["How long did they stay?",["5 days","1 week","1 month","2 days"],0],
+  ["When did she go?",["last year","last month","yesterday","today"],0],
+  ["Did Kate travel alone?",["Yes","No","Not mentioned","Maybe"],1]
+ ]
+},
+
+/* ===== GRAMMAR ===== */
+{
+ hab:"Grammar",
+ bncc:"EF06LI05",
+ tipo:"grammar",
+ itens:[
+  ["She ___ my friend.",["am","is","are","be"],1],
+  ["They ___ students.",["am","is","are","be"],2],
+  ["I ___ a student.",["am","is","are","be"],0],
+  ["He ___ 12 years old.",["am","is","are","be"],1],
+  ["We ___ happy.",["am","is","are","be"],2]
+ ]
+}
+
 ];
 
 /******** MONTAGEM ********/
 const form=document.getElementById("quiz");
-let idx=0;
-banco.forEach(b=>{
-  if(b.tipo==="listening"||b.tipo==="reading"){
-    form.innerHTML+=`<h3>${b.hab}</h3><div class="bncc">${b.bncc}</div>`;
-    if(b.audio) form.innerHTML+=`<audio controls src="${b.audio}"></audio>`;
-    if(b.texto) form.innerHTML+=`<p>${b.texto}</p>`;
-    b.perg.forEach(p=>{
-      idx++;
-      form.innerHTML+=`<p>${idx}. ${p.q}</p>`;
-      p.a.forEach((alt,j)=>{
-        form.innerHTML+=`<label><input type="radio" name="q${idx}" value="${j}"> ${alt}</label><br>`;
+let n=0;
+
+blocos.forEach(b=>{
+  form.innerHTML+=`<h3>${b.hab}</h3><div class="bncc">BNCC: ${b.bncc}</div>`;
+
+  if(b.tipo==="writing"){
+    b.itens.forEach(i=>{
+      n++;
+      form.innerHTML+=`<p>${n}. Reorder: ${i[0]}</p><textarea id="q${n}"></textarea>`;
+    });
+  }
+
+  if(b.tipo==="listening"){
+    form.innerHTML+=`<audio controls src="${b.audio}"></audio>`;
+    b.itens.forEach(i=>{
+      n++;
+      form.innerHTML+=`<p>${n}. ${i[0]}</p>`;
+      i[1].forEach((a,j)=>{
+        form.innerHTML+=`<label><input type="radio" name="q${n}" value="${j}"> ${a}</label><br>`;
       });
     });
-  } else {
-    idx++;
-    form.innerHTML+=`<h3>${idx}. ${b.hab}</h3><div class="bncc">${b.bncc}</div><p>${b.q}</p>`;
-    if(b.tipo==="aberta"){
-      form.innerHTML+=`<textarea id="q${idx}"></textarea>`;
-    } else {
-      b.a.forEach((alt,j)=>{
-        form.innerHTML+=`<label><input type="radio" name="q${idx}" value="${j}"> ${alt}</label><br>`;
+  }
+
+  if(b.tipo==="reading"){
+    form.innerHTML+=`<p><em>${b.texto}</em></p>`;
+    b.itens.forEach(i=>{
+      n++;
+      form.innerHTML+=`<p>${n}. ${i[0]}</p>`;
+      i[1].forEach((a,j)=>{
+        form.innerHTML+=`<label><input type="radio" name="q${n}" value="${j}"> ${a}</label><br>`;
       });
-    }
+    });
+  }
+
+  if(b.tipo==="grammar"){
+    b.itens.forEach(i=>{
+      n++;
+      form.innerHTML+=`<p>${n}. ${i[0]}</p>`;
+      i[1].forEach((a,j)=>{
+        form.innerHTML+=`<label><input type="radio" name="q${n}" value="${j}"> ${a}</label><br>`;
+      });
+    });
   }
 });
 
 /******** CORREÇÃO ********/
-function normalizar(txt){
- return txt.trim().replace(/\s+/g," ");
-}
+function normalizar(t){return t.trim().replace(/\s+/g," ");}
 
 function finalizar(){
- let pontos=0, i=0, feedback="", mapa={Writing:0,Listening:0,Reading:0,Grammar:0};
- banco.forEach(b=>{
-  if(b.tipo==="listening"||b.tipo==="reading"){
-    b.perg.forEach(p=>{
+ let pontos=0,total=n,fb="",i=0;
+ let media={Writing:0,Listening:0,Reading:0,Grammar:0};
+
+ blocos.forEach(b=>{
+  if(b.tipo==="writing"){
+    b.itens.forEach(i2=>{
+      i++;
+      if(normalizar(document.getElementById(`q${i}`).value)===i2[1]){
+        pontos++;media.Writing+=0.5;fb+=`<p class="correta">${i} ✔</p>`;
+      } else fb+=`<p class="errada">${i} ✘</p>`;
+    });
+  } else {
+    b.itens.forEach(i2=>{
       i++;
       const r=document.querySelector(`input[name="q${i}"]:checked`);
-      if(r&&Number(r.value)===p.c){pontos++;mapa[b.hab]+=0.5;feedback+=`<p class="correta">${i} ✔</p>`;}
-      else feedback+=`<p class="errada">${i} ✘</p>`;
+      if(r&&Number(r.value)===i2[2]){
+        pontos++;media[b.hab]+=0.5;fb+=`<p class="correta">${i} ✔</p>`;
+      } else fb+=`<p class="errada">${i} ✘</p>`;
     });
-  } else if(b.tipo==="aberta"){
-    i++;
-    const t=normalizar(document.getElementById(`q${i}`).value);
-    if(t===b.r){pontos++;mapa[b.hab]+=0.5;feedback+=`<p class="correta">${i} ✔</p>`;}
-    else feedback+=`<p class="errada">${i} ✘</p>`;
-  } else {
-    i++;
-    const r=document.querySelector(`input[name="q${i}"]:checked`);
-    if(r&&Number(r.value)===b.c){pontos++;mapa[b.hab]+=0.5;feedback+=`<p class="correta">${i} ✔</p>`;}
-    else feedback+=`<p class="errada">${i} ✘</p>`;
   }
  });
 
- document.getElementById("resultado").innerHTML=
- `<strong>${nome.value}</strong><br>
+ document.getElementById("resultado").innerHTML=`
+ <strong>${nome.value}</strong><br>
  Escola: ${escola.value}<br>
- Nota Final: ${pontos*0.5}/10<br>
- Writing: ${mapa.Writing}<br>
- Listening: ${mapa.Listening}<br>
- Reading: ${mapa.Reading}<br>
- Grammar: ${mapa.Grammar}<hr>${feedback}`;
+ Nota Final: ${pontos*0.5}/10<br><br>
+ Writing: ${media.Writing}<br>
+ Listening: ${media.Listening}<br>
+ Reading: ${media.Reading}<br>
+ Grammar: ${media.Grammar}<hr>${fb}`;
 }
 </script>
+
 </body>
 </html>
-
-
