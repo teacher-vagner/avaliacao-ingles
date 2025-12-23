@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+ <script src="config.js"></script>
+
 <meta charset="UTF-8">
 <title>6º Ano – Inglês – 1º Bimestre</title>
 
@@ -59,7 +61,7 @@ button{
  
 <div class="box">
   <label>Escola</label><br>
-  <input id="escola" style="width:100%" placeholder="Nome da escola"><br><br>
+  <input id="escola" readonly style="width:100%"><br><br>
   <div class="linha">
     <input id="nome" class="nome" placeholder="Nome do aluno">
     <input id="numero" class="numero" placeholder="Nº">
@@ -77,6 +79,10 @@ button{
 <div id="resultado" class="box"></div>
 
 <script>
+ document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("escola").value = CONFIG.escola;
+});
+ 
 /******** CONFIG ********/
 const SERIE="6º Ano";
 const BIMESTRE="1º Bimestre";
@@ -225,6 +231,10 @@ function finalizar(){
  Listening: ${media.Listening}<br>
  Reading: ${media.Reading}<br>
  Grammar: ${media.Grammar}<hr>${fb}`;
+ 
+ window.location.href =
+  `mailto:${CONFIG.emailProfessor}?subject=Avaliação Inglês 6º Ano&body=${encodeURIComponent(corpoEmail)}`;
+
 }
 </script>
 
