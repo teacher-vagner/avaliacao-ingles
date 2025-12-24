@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Hangman – School Vocabulary</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    text-align: center;
+}
+
+h1 { color: #2c3e50; }
+
+.info {
+    font-size: 20px;
+    margin: 10px;
+}
+
+#hangman {
+    font-size: 28px;
+    line-height: 32px;
+    white-space: pre;
+    margin: 15px auto;
+}
+
+#word {
+    font-size: 42px;
+    letter-spacing: 12px;
+    margin: 20px;
+    font-weight: bold;
+}
+
+.letters {
+    width: 520px;
+    margin: auto;
+}
+
+button {
+    margin: 6px;
+    padding: 14px 18px;
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 8px;
+    border: none;
+    background: #2980b9;
+    color: white;
+}
+
+button:disabled {
+    background: #bdc3c7;
+    cursor: default;
+}
+
+#message {
+    font-size: 22px;
+    margin-top: 15px;
+}
+
+#ranking {
+    width: 340px;
+    margin: 20px auto;
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: left;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Hangman – School 📚</h1>
+
+<div class="info">
+👤 Student: <strong id="studentName"></strong> |
+⭐ Score: <strong id="score">0</strong> |
+⏱️ Time: <strong id="time">0</strong>s |
+❌ Errors: <strong id="errors">0</strong>/6
+</div>
+
+<div id="hangman"></div>
+<div id="word"></div>
+
+<div class="letters" id="letters"></div>
+
+<p id="message"></p>
+
+<div id="ranking">
+<h3>🏆 Classroom Ranking</h3>
+<ol id="rankingList"></ol>
+</div>
+
+<script>
+// ================= STUDENT =================
+const student = prompt("Enter your name:");
+document.getElementById("studentName").textContent = student || "Student";
+
+// ================= TIMER =================
+let time = 0;
+const timer = setInterval(() => {
+    time++;
+    document.getElementById("time").textContent = time;
+}, 1000);
+
+// ================= SCORE =================
+let score = 0;
+function updateScore(value) {
+    score += value;
+    document.getElementById("score").textContent = score;
+}
+
+// ================= SOUNDS =================
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function successSound() {
+    const osc = audioCtx.createOscillator();
+    osc.frequency.value = 700;
+    osc.connect(audioCtx.destination);
+    osc.start();
+    setTimeout(() => osc.stop(), 200);
+}
+
+function errorSound() {
+    const osc = audioCtx.createOscillator();
+    osc.frequency.value = 120;
+    osc.connect(audioCtx.destination);
+    osc.start();
+    setTimeout(() => osc.stop(), 300);
+}
+
+// ================= SPEECH =================
+function speak(word) {
+    const msg = new SpeechSynthesisUtterance(word);
+    msg.lang = "en-US";
+    speechSynthesis.speak(msg);
+}
+
+// ================= HANGMAN DRAWINGS =================
+const hangmanStages = [
+`
+
+
+
+
+`,
+`
+  |
+  |
+  |
+  |
+__|__`,
+`
+  ______
+  |
+  |
+  |
+  |
+__|__`,
+`
+  ______
+  |    |
+  |
+  |
+  |
+__|__`,
+`
+  ______
+  |    |
+  |    O
+  |
+  |
+__|__`,
+`
+  ______
+  |    |
+  |    O
+  |    |
+  |
+__|__`,
+`
+  ______
+  |    |
+  |    O
+  |   /|\\
+  |
+__|__`
+];
+
+// ================= VOCABULARY =================
+const words = ["BOOK", "TEACHER", "STUDENT", "PENCIL", "SCHOOL", "NOTEBOOK"];
+const secretWord = words[Math.floor(Math.random() * words.length)];
+let displayWord = Array(secretWord.length).fill("_");
+let errors = 0;
+
+// ================= DISPLAY =================
+document.getElementById("word").textContent = displayWord.join(" ");
+document.getElementById("hangman").textContent = hangmanStages[0];
+
+const lettersDiv = document.getElementById("letters");
+"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(letter => {
+    const btn = document.createElement("button");
+    btn.textContent = letter;
+
+    btn.onclick = () => {
+        btn.disabled = true;
+        checkLetter(letter);
+    };
+
+    lettersDiv.appendChild(btn);
+});
+
+// ================= GAME LOGIC =================
+function checkLetter(letter) {
+    let hit = false;
+
+    for (let i = 0; i < secretWord.length; i++) {
+        if (secretWord[i] === letter) {
+            displayWord[i] = letter;
+            hit = true;
+        }
+    }
+
+    document.getElementById("word").textContent = displayWord.join(" ");
+
+    if (hit) {
+        updateScore(5);
+        successSound();
+    } else {
+        errors++;
+        updateScore(-5);
+        errorSound();
+        document.getElementById("errors").textContent = errors;
+        document.getElementById("hangman").textContent = hangmanStages[errors];
+    }
+
+    if (!displayWord.includes("_")) {
+        endGame(true);
+    }
+
+    if (errors === 6) {
+        endGame(false);
+    }
+}
+
+// ================= END GAME =================
+function endGame(win) {
+    clearInterval(timer);
+    speak(secretWord);
+    document.querySelectorAll("button").forEach(b => b.disabled = true);
+
+    document.getElementById("message").textContent = win
+        ? `🎉 You win! The word was ${secretWord}`
+        : `💣 Game Over! The word was ${secretWord}`;
+
+    saveResult();
+    loadRanking();
+}
+
+// ================= RANKING =================
+function saveResult() {
+    let ranking = JSON.parse(localStorage.getItem("hangmanRanking")) || [];
+    ranking.push({ name: student, score: score, time: time });
+
+    ranking.sort((a, b) => {
+        if (b.score === a.score) return a.time - b.time;
+        return b.score - a.score;
+    });
+
+    ranking = ranking.slice(0, 5);
+    localStorage.setItem("hangmanRanking", JSON.stringify(ranking));
+}
+
+function loadRanking() {
+    const ranking = JSON.parse(localStorage.getItem("hangmanRanking")) || [];
+    const list = document.getElementById("rankingList");
+    list.innerHTML = "";
+
+    ranking.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = `${item.name} – ${item.score} pts – ${item.time}s`;
+        list.appendChild(li);
+    });
+}
+
+loadRanking();
+</script>
+
+</body>
+</html>

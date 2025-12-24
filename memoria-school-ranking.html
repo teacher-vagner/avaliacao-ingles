@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Memory Game – School Vocabulary</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    text-align: center;
+}
+
+h1 { color: #2c3e50; }
+
+.info {
+    font-size: 18px;
+    margin: 10px;
+}
+
+.game-board {
+    width: 480px;
+    margin: 20px auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+}
+
+.card {
+    background: #2980b9;
+    color: white;
+    height: 110px;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 12px;
+    font-weight: bold;
+}
+
+.card.flipped {
+    background: #ecf0f1;
+    color: #2c3e50;
+}
+
+.card.matched {
+    background: #27ae60;
+    color: white;
+}
+
+#message {
+    font-size: 20px;
+    margin-top: 15px;
+}
+
+#ranking {
+    width: 320px;
+    margin: 20px auto;
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: left;
+}
+
+#ranking h3 {
+    text-align: center;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Memory Game – School 📚</h1>
+
+<div class="info">
+👤 Student: <strong id="studentName"></strong> |
+⭐ Score: <strong id="score">0</strong> |
+⏱️ Time: <strong id="time">0</strong>s
+</div>
+
+<div class="game-board" id="gameBoard"></div>
+
+<p id="message"></p>
+
+<div id="ranking">
+<h3>🏆 Classroom Ranking</h3>
+<ol id="rankingList"></ol>
+</div>
+
+<script>
+// ================= STUDENT =================
+const student = prompt("Enter your name:");
+document.getElementById("studentName").textContent = student || "Student";
+
+// ================= TIMER =================
+let time = 0;
+const timer = setInterval(() => {
+    time++;
+    document.getElementById("time").textContent = time;
+}, 1000);
+
+// ================= SCORE =================
+let score = 0;
+function updateScore(value) {
+    score += value;
+    document.getElementById("score").textContent = score;
+}
+
+// ================= SOUNDS =================
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function successSound() {
+    const osc = audioCtx.createOscillator();
+    osc.frequency.value = 800;
+    osc.connect(audioCtx.destination);
+    osc.start();
+    setTimeout(() => osc.stop(), 200);
+}
+
+function errorSound() {
+    const osc = audioCtx.createOscillator();
+    osc.frequency.value = 120;
+    osc.connect(audioCtx.destination);
+    osc.start();
+    setTimeout(() => osc.stop(), 300);
+}
+
+// ================= SPEECH =================
+function speak(word) {
+    const msg = new SpeechSynthesisUtterance(word);
+    msg.lang = "en-US";
+    speechSynthesis.speak(msg);
+}
+
+// ================= VOCABULARY =================
+const cardsArray = [
+    { name: "Book", value: "📘" }, { name: "Book", value: "📘" },
+    { name: "Teacher", value: "👩‍🏫" }, { name: "Teacher", value: "👩‍🏫" },
+    { name: "Student", value: "🧑‍🎓" }, { name: "Student", value: "🧑‍🎓" },
+    { name: "Pencil", value: "✏️" }, { name: "Pencil", value: "✏️" },
+    { name: "School", value: "🏫" }, { name: "School", value: "🏫" },
+    { name: "Notebook", value: "📓" }, { name: "Notebook", value: "📓" }
+];
+
+cardsArray.sort(() => 0.5 - Math.random());
+
+// ================= GAME =================
+const board = document.getElementById("gameBoard");
+let firstCard = null;
+let secondCard = null;
+let lockBoard = false;
+let matches = 0;
+
+cardsArray.forEach(item => {
+    const card = document.createElement("div");
+    card.classList.add("card");
+    card.dataset.name = item.name;
+    card.textContent = "?";
+
+    card.addEventListener("click", () => {
+        if (lockBoard || card.classList.contains("flipped")) return;
+
+        card.classList.add("flipped");
+        card.textContent = item.name + " " + item.value;
+        speak(item.name);
+
+        if (!firstCard) {
+            firstCard = card;
+        } else {
+            secondCard = card;
+            checkMatch();
+        }
+    });
+
+    board.appendChild(card);
+});
+
+function checkMatch() {
+    lockBoard = true;
+
+    if (firstCard.dataset.name === secondCard.dataset.name) {
+        firstCard.classList.add("matched");
+        secondCard.classList.add("matched");
+        matches++;
+        updateScore(10);
+        successSound();
+        reset();
+
+        if (matches === cardsArray.length / 2) {
+            clearInterval(timer);
+            saveResult();
+            document.getElementById("message").textContent =
+                `🎉 Well done, ${student}!`;
+            loadRanking();
+        }
+    } else {
+        updateScore(-5);
+        errorSound();
+        setTimeout(() => {
+            firstCard.classList.remove("flipped");
+            secondCard.classList.remove("flipped");
+            firstCard.textContent = "?";
+            secondCard.textContent = "?";
+            reset();
+        }, 900);
+    }
+}
+
+function reset() {
+    firstCard = null;
+    secondCard = null;
+    lockBoard = false;
+}
+
+// ================= RANKING =================
+function saveResult() {
+    let ranking = JSON.parse(localStorage.getItem("ranking")) || [];
+    ranking.push({ name: student, score: score, time: time });
+
+    ranking.sort((a, b) => {
+        if (b.score === a.score) {
+            return a.time - b.time;
+        }
+        return b.score - a.score;
+    });
+
+    ranking = ranking.slice(0, 5);
+    localStorage.setItem("ranking", JSON.stringify(ranking));
+}
+
+function loadRanking() {
+    const ranking = JSON.parse(localStorage.getItem("ranking")) || [];
+    const list = document.getElementById("rankingList");
+    list.innerHTML = "";
+
+    ranking.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = `${item.name} – ${item.score} pts – ${item.time}s`;
+        list.appendChild(li);
+    });
+}
+
+loadRanking();
+</script>
+
+</body>
+</html>
