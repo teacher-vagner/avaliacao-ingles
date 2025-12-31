@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Bolão Megasena – Família Papa</title>
+
+<style>
+body{
+  font-family:Arial;
+  background:#f2f2f2;
+  padding:20px
+}
+.container{
+  max-width:1200px;
+  margin:auto;
+  background:#fff;
+  padding:20px;
+  border-radius:8px
+}
+.logo{
+  text-align:center;
+  margin-bottom:20px
+}
+.logo img{
+  max-height:120px
+}
+h1,h2{text-align:center}
+
+input{
+  padding:6px;
+  text-align:center;
+  margin:3px;
+  font-size:16px
+}
+button{
+  padding:10px 20px;
+  font-size:16px;
+  margin:10px;
+  cursor:pointer
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:20px
+}
+th,td{
+  border:1px solid #ccc;
+  padding:8px;
+  text-align:center
+}
+th{background:#eee}
+
+.acerto{
+  color:#000;
+  font-weight:bold
+}
+.erro{
+  color:#aaa
+}
+
+.caixa{
+  background:#f9f9f9;
+  padding:15px;
+  border-radius:6px;
+  margin-top:20px
+}
+
+.galeria{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:center;
+  margin-top:30px
+}
+.galeria img{
+  width:220px;
+  border-radius:8px;
+  box-shadow:0 0 5px rgba(0,0,0,.2)
+}
+
+@media print{
+  button,input{display:none}
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<!-- LOGO -->
+<div class="logo">
+  <img src="logo-familia.jpg" alt="Família Papa">
+</div>
+
+<h1>🎉 Bolão da Megasena – Família Papa 🎉</h1>
+
+<h2>Dezenas Sorteadas</h2>
+<div style="text-align:center">
+<input id="d1" maxlength="2" size="2" oninput="campoNumero(this,1)">
+<input id="d2" maxlength="2" size="2" oninput="campoNumero(this,2)">
+<input id="d3" maxlength="2" size="2" oninput="campoNumero(this,3)">
+<input id="d4" maxlength="2" size="2" oninput="campoNumero(this,4)">
+<input id="d5" maxlength="2" size="2" oninput="campoNumero(this,5)">
+<input id="d6" maxlength="2" size="2" oninput="campoNumero(this,6)">
+</div>
+
+<h2>💰 Valor Total do Prêmio</h2>
+<div style="text-align:center">
+<input id="premio" placeholder="R$ 1.000.000,00" size="20">
+</div>
+
+<div style="text-align:center">
+<button onclick="conferir()">Conferir Bolão</button>
+<button onclick="window.print()">Imprimir / PDF</button>
+</div>
+
+<div id="resultado" class="caixa" style="display:none;"></div>
+
+
+<!-- MENSAGEM DO BOLÃO (INSERIDA ACIMA DO RANKING) -->
+<div class="caixa" style="border-left:6px solid #f0ad4e;">
+  <p style="font-size:16px;line-height:1.6">
+    <strong>⚠️ Bolão Familiar – Aviso Importante</strong><br><br>
+    Este bolão é de caráter <strong>familiar</strong>.<br>
+    <strong>Todos os participantes recebem o mesmo valor do prêmio</strong>,
+    independentemente da quantidade de acertos obtidos.<br><br>
+
+    Em caso de premiação, <strong>todos os apostadores deverão comparecer juntos</strong>
+    no dia do recebimento para realizar a retirada do valor
+    <strong>diretamente na Caixa Econômica Federal</strong>, onde o prêmio será
+    dividido de forma igual entre todos.
+  </p>
+</div>
+
+
+<h2>🏆 Ranking de Acertos</h2>
+<table>
+<thead>
+<tr>
+<th>Nome</th>
+<th>Jogo</th>
+<th>Dezenas</th>
+<th>Acertos</th>
+</tr>
+</thead>
+<tbody id="ranking"></tbody>
+</table>
+
+<!-- GALERIA -->
+<h2>📸 Fotos dos Jogos</h2>
+<div class="galeria">
+  <img src="bolaopapa1.jpg">
+  <img src="bolaopapa2.jpg">
+  <img src="bolaopapa3.jpg">
+  <img src="bolaopapa4.jpg">
+  <img src="bolaopapa5.jpg">
+  <img src="bolaopapa6.jpg">
+  <img src="bolaopapa7.jpg">
+  <img src="bolaopapa8.jpg">
+  <img src="bolaopapa9.jpg">
+  <img src="bolaopapa10.jpg">
+  <img src="bolaopapa11.jpg">
+  <img src="bolaopapa12.jpg">
+  <img src="bolaopapa13.jpg">
+  <img src="bolaopapa14.jpg">
+</div>
+
+</div>
+
+<script>
+function campoNumero(campo,pos){
+  campo.value = campo.value.replace(/\D/g,'').slice(0,2);
+  if(campo.value.length===2 && pos<6){
+    document.getElementById("d"+(pos+1)).focus();
+  }
+}
+
+function parseValorBR(v){
+  return parseFloat(
+    v.replace(/[R$\s]/g,'')
+     .replace(/\./g,'')
+     .replace(',','.')
+  )||0;
+}
+
+function formatarBR(v){
+  return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+}
+
+const jogos = [/* jogos mantidos exatamente como enviados */ 
+ {nome:"Rafaela de Almeida Setta",j:["05-10-23-34-37-53","04-27-30-38-42-56","11-17-32-35-44-54","33-10-23-37-46-53"]},
+ {nome:"Vagner Nunes da Rocha",j:["06-15-28-36-47-51","12-19-34-56-59-60","13-21-43-48-54-59","08-16-24-32-40-48"]},
+ {nome:"Giovani Antonio de Oliveira Serdeira",j:["02-07-12-27-46-48","20-25-33-34-37-55","18-21-29-38-44-52","09-11-22-23-41-57"]},
+ {nome:"Humberto de Oliveira Lima Neto",j:["07-14-22-28-32-47","10-17-33-37-47-51","17-22-29-37-47-57","14-22-28-32-47-58"]},
+ {nome:"Cristiane Celeste Almeida",j:["11-13-19-27-34-60","17-23-24-25-26-59","06-07-18-45-56-57","17-19-28-29-47-53"]},
+ {nome:"Paloma Pereira de Almeida Lempk",j:["07-15-23-37-43-58","04-11-21-38-46-50","02-16-20-26-48-60","08-14-26-32-49-55"]},
+ {nome:"Roselaine de Almeida Souza",j:["03-11-17-23-33-45","01-05-17-23-51-59","09-17-31-43-44-57","02-19-23-27-31-44"]},
+ {nome:"Naisy Christina Monteiro dos Reis",j:["01-05-08-28-51-59","05-11-21-47-53-60","03-07-15-22-41-56","02-10-18-34-43-59"]},
+ {nome:"Laudelina Candida de Almeida",j:["07-16-28-43-49-56","08-11-23-33-48-51","03-09-21-27-37-50","01-05-18-40-41-53"]},
+ {nome:"Maria Antônia",j:["08-16-21-30-33-42","07-11-15-31-40-51","03-10-23-35-47-50","05-18-27-36-48-59"]},
+ {nome:"Vanessa Pereira de Almeida Brantes",j:["25-15-05-48-11-16","09-08-06-56-54-11","11-12-09-08-05-15","01-04-08-09-12-13"]},
+ {nome:"João Paulo R. Almeida",j:["10-05-33-03-20-34","10-05-33-36-58-20","10-03-34-36-58-05","05-33-20-34-36-58"]},
+ {nome:"Juliana Assis de Almeida",j:["04-10-23-32-37-54","05-17-27-34-42-53","11-30-33-35-44-56","10-23-38-46-53-54"]},
+ {nome:"Raquel de Almeida Setta",j:["03-07-10-21-35-48","10-25-38-44-56-60","02-18-22-35-41-52","05-16-24-31-39-54"]},
+ {nome:"Josimar Assis de Almeida",j:["20-34-38-43-50-58","22-36-39-44-51-59","23-37-40-45-52-60","24-38-41-46-53-60"]},
+ {nome:"Mônica Aparecida Alves de Almeida",j:["57-01-17-19-29-50","46-12-10-01-27-39","47-02-17-19-29-50","51-30-20-18-03-59"]},
+ {nome:"Henrique",j:["12-30-35-48-54-60","12-19-25-35-40-52","08-12-30-35-40-52","07-12-30-35-40-52"]}
+];
+
+function conferir(){
+ const sorteio=[];
+ for(let i=1;i<=6;i++){
+  sorteio.push(document.getElementById("d"+i).value.padStart(2,'0'));
+ }
+
+ const premio=parseValorBR(document.getElementById("premio").value);
+ const valorPessoa=premio/jogos.length;
+
+ let linhas=[];
+ jogos.forEach(p=>{
+  p.j.forEach((jogo,idx)=>{
+   let ac=0;
+   const marcado=jogo.split("-").map(n=>{
+    if(sorteio.includes(n)){ac++;return `<span class="acerto">${n}</span>`;}
+    return `<span class="erro">${n}</span>`;
+   }).join(" - ");
+
+   linhas.push({nome:p.nome,jogo:idx+1,nums:marcado,acertos:ac});
+  });
+ });
+
+ linhas.sort((a,b)=>b.acertos-a.acertos);
+
+ document.getElementById("ranking").innerHTML=
+ linhas.map(l=>`
+ <tr>
+  <td>${l.nome}</td>
+  <td>${l.jogo}</td>
+  <td>${l.nums}</td>
+  <td>${l.acertos}</td>
+ </tr>`).join("");
+
+ document.getElementById("resultado").style.display="block";
+ document.getElementById("resultado").innerHTML=`
+ Prêmio total: <strong>${formatarBR(premio)}</strong><br>
+ Participantes: <strong>${jogos.length}</strong><br>
+ Cada participante recebe: <strong>${formatarBR(valorPessoa)}</strong>
+ `;
+}
+</script>
+
+</body>
+</html>
